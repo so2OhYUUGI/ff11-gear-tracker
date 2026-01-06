@@ -1,83 +1,106 @@
-'use client';
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import Dashboard from '@/components/Dashboard'
 
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+export default async function Home() {
+  const supabase = await createClient()
 
-// 型定義（TypeScript用）
-type Item = {
-  id: number;
-  name: string;
-  category: string;
-  sub_category: string | null;
-  stack_size: number;
-  wiki_url: string | null;
-};
+  // 1. ユーザー情報取得
+  const { data: { user } } = await supabase.auth.getUser()
 
-export default function Home() {
-  const [items, setItems] = useState<Item[]>([]);
-  const [loading, setLoading] = useState(true);
+  // 2. アイテム一覧取得
+  const { data: items } = await supabase
+    .from('items')
+    .select('*')
+    .order('id', { ascending: true })
 
-  useEffect(() => {
-    const fetchItems = async () => {
-      // ID順に並べ替えて取得
-      const { data, error } = await supabase
-        .from('items')
-        .select('*')
-        .order('id', { ascending: true });
+  // 3. ログインしている場合のみ、キャラと在庫を取得
+  let characters: any[] = []
+  let inventoryMap: Record<number, number> = {}
 
-      if (!error && data) {
-        setItems(data);
-      }
-      setLoading(false);
-    };
+  if (user) {
+    // キャラ取得 (RLSポリシーにより自分のキャラだけ取得できる)
+    const { data: chars } = await supabase.from('characters').select('id, name')
+    characters = chars || []
 
-    fetchItems();
-  }, []);
+    // 在庫取得 (とりあえず1人目のキャラの分だけ簡易取得)
+    if (characters.length > 0) {
+      const { data: inv } = await supabase
+        .from('inventories')
+        .select('item_id, quantity')
+        .eq('character_id', characters[0].id)
+
+      // 配列を使いやすい連想配列 { itemId: quantity } に変換
+      inv?.forEach((row) => {
+        inventoryMap[row.item_id] = row.quantity
+      })
+    }
+  }
+
+  // ログアウト処理
+  const signOut = async () => {
+    'use server'
+    const supabase = await createClient()
+    await supabase.auth.signOut()
+    return redirect('/login')
+  }
 
   return (
     <main className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-5xl mx-auto">
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-800">FF11 Gear Tracker</h1>
-          <p className="text-gray-600">素材・装備・ポイント管理アプリ</p>
+        {/* ヘッダー */}
+        <header className="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">FF11 Gear Tracker</h1>
+            <p className="text-gray-600">素材・装備・ポイント管理アプリ</p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {user ? (
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-700 hidden sm:inline">
+                  Login: {user.email}
+                </span>
+                <form action={signOut}>
+                  <button className="bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded text-sm shadow-sm transition-colors">
+                    ログアウト
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="bg-indigo-600 text-white px-6 py-2 rounded shadow hover:bg-indigo-700 transition-colors"
+              >
+                ログイン
+              </Link>
+            )}
+          </div>
         </header>
 
-        {loading ? (
-          <p className="text-center text-gray-500">Loading data...</p>
+        {/* コンテンツエリア */}
+        {user ? (
+          <Dashboard
+            items={items || []}
+            characters={characters}
+            initialInventory={inventoryMap}
+            userId={user.id}
+          />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white p-4 rounded-lg shadow border border-gray-200 hover:shadow-md transition-shadow"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <span className={`text-xs px-2 py-1 rounded font-semibold ${item.category === 'currency' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'
-                    }`}>
-                    {item.category === 'currency' ? 'ポイント' : '素材/装備'}
-                  </span>
-                  <span className="text-xs text-gray-400">ID: {item.id}</span>
-                </div>
-
-                <h2 className="text-xl font-bold text-gray-800 mb-1">{item.name}</h2>
-
-                <div className="text-sm text-gray-600 mb-3">
-                  {item.sub_category && <span className="mr-2">分類: {item.sub_category}</span>}
-                  <span>スタック: {item.stack_size}</span>
-                </div>
-
-                {item.wiki_url && (
-                  <a
-                    href={item.wiki_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-indigo-600 text-sm hover:underline"
-                  >
-                    用語辞典で見る →
-                  </a>
-                )}
-              </div>
-            ))}
+          // 未ログイン時の表示
+          <div className="bg-white p-12 rounded-lg shadow-md text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">ようこそ！</h2>
+            <p className="text-gray-600 mb-8">
+              RMEA素材やアンバスポイントを一元管理しましょう。<br />
+              ログインすると、在庫の記録や目標設定が可能になります。
+            </p>
+            <Link
+              href="/login"
+              className="inline-block bg-indigo-600 text-white text-lg px-8 py-3 rounded-lg hover:bg-indigo-700 shadow transition-transform hover:scale-105"
+            >
+              今すぐ始める
+            </Link>
           </div>
         )}
       </div>
