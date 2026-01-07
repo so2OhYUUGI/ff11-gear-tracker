@@ -79,12 +79,6 @@ export function Dashboard({ characters, items, user }: DashboardProps) {
 				</form>
 			</div>
 
-			{/* --- デバッグ用情報 (原因が判明したら削除してください) --- */}
-			<div className="bg-amber-50 border border-amber-200 p-2 rounded text-[10px] text-amber-800 flex gap-4">
-				<span>User ID: {user?.id}</span>
-				<span>Chars In DB: {characters.length}</span>
-			</div>
-
 			{/* --- メインコンテンツ --- */}
 			<div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
 				<div className="space-y-1">

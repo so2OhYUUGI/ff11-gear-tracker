@@ -17,8 +17,8 @@ export default async function Home() {
 
   const { data: characters, error: charError, count } = await supabase
     .from("characters")
-    .select(`*, inventories (*)`, { count: 'exact' }); // countを取得するように変更
-
+    .select(`*, inventories (*)`, { count: 'exact' }) // countを取得するように変更
+    .order('created_at', { ascending: true });
   if (charError) {
     console.error("Query Error Detail:", charError);
   }
