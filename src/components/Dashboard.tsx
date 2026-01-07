@@ -1,181 +1,175 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useState } from "react";
+import { PlusCircle, MinusCircle, Loader2, UserPlus } from "lucide-react"; // UserPlusを追加
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { updateInventory } from "../app/actions";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog"; // Dialogをインポート
+import { CharacterWizard } from "@/components/character/CharacterWizard"; // ウィザードをインポート
+import { useRouter } from "next/navigation";
 
-// 型定義
-type Item = {
-	id: number
-	name: string
-	category: string
-	sub_category: string | null
-	stack_size: number
+interface DashboardProps {
+	characters: any[];
+	items: any[];
 }
 
-type Character = {
-	id: string
-	name: string
-}
+export function Dashboard({ characters, items }: DashboardProps) {
+	const [inventoryMap, setInventoryMap] = useState<Record<string, number>>({});
+	const [loadingItems, setLoadingItems] = useState<Record<string, boolean>>({});
+	const [isWizardOpen, setIsWizardOpen] = useState(false); // ウィザードの開閉状態
+	const router = useRouter();
 
-type InventoryMap = Record<number, number> // アイテムID: 所持数
+	const selectedCharacter = characters[0];
 
-export default function Dashboard({
-	items,
-	characters,
-	initialInventory,
-	userId
-}: {
-	items: Item[]
-	characters: Character[]
-	initialInventory: InventoryMap
-	userId: string
-}) {
-	const supabase = createClient()
-	const router = useRouter()
+	const handleUpdateQuantity = async (itemId: string, currentQty: number, delta: number) => {
+		if (!selectedCharacter) return;
 
-	// 状態管理
-	const [selectedCharId, setSelectedCharId] = useState<string>(characters[0]?.id || '')
-	const [inventory, setInventory] = useState<InventoryMap>(initialInventory)
-	const [isCreating, setIsCreating] = useState(false)
+		const newQty = Math.max(0, currentQty + delta);
+		const key = `${selectedCharacter.id}-${itemId}`;
 
-	// 1. キャラクター作成処理
-	const createCharacter = async () => {
-		setIsCreating(true)
+		setLoadingItems((prev) => ({ ...prev, [key]: true }));
+
 		try {
-			// 簡易化のため、アカウントとキャラを同時に作ります
-			// 1. アカウント作成
-			const { data: account, error: accError } = await supabase
-				.from('game_accounts')
-				.insert({ user_id: userId, account_name: 'メイン垢' })
-				.select()
-				.single()
-
-			if (accError) throw accError
-
-			// 2. キャラ作成
-			const { error: charError } = await supabase
-				.from('characters')
-				.insert({ account_id: account.id, name: 'MainCharacter' })
-
-			if (charError) throw charError
-
-			// 画面更新
-			router.refresh()
-		} catch (e) {
-			alert('キャラ作成エラー: ' + (e as Error).message)
+			await updateInventory(selectedCharacter.id, itemId, newQty);
+			setInventoryMap((prev) => ({ ...prev, [key]: newQty }));
+		} catch (error) {
+			console.error("Failed to update inventory:", error);
 		} finally {
-			setIsCreating(false)
+			setLoadingItems((prev) => ({ ...prev, [key]: false }));
 		}
-	}
+	};
 
-	// 2. 在庫更新処理
-	const updateInventory = async (itemId: number, newQuantity: number) => {
-		if (!selectedCharId) return alert('キャラクターを選択してください')
-		if (newQuantity < 0) return
+	const getQuantity = (itemId: string) => {
+		// selectedCharacter自体がいない場合は0を返す
+		if (!selectedCharacter) return 0;
 
-		// 画面の表示を先に更新（サクサク動くように）
-		setInventory((prev) => ({ ...prev, [itemId]: newQuantity }))
+		const key = `${selectedCharacter.id}-${itemId}`;
+		if (inventoryMap[key] !== undefined) return inventoryMap[key];
 
-		// DB更新
-		const { error } = await supabase
-			.from('inventories')
-			.upsert(
-				{
-					character_id: selectedCharId,
-					item_id: itemId,
-					quantity: newQuantity,
-					location: 'inventory'
-				},
-				{ onConflict: 'character_id, item_id, location' }
-			)
+		// inventories が undefined または null の場合でもエラーにならないようにする
+		const inventories = selectedCharacter.inventories || [];
+		const inv = inventories.find((i: any) => i.item_id === itemId);
 
-		if (error) console.error('保存失敗', error)
+		return inv ? inv.quantity : 0;
+	};
+	
+	// キャラクターがいない時の表示
+	if (characters.length === 0) {
+		return (
+			<div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+				<h2 className="text-xl font-semibold">キャラクターが登録されていません</h2>
+				<p className="text-muted-foreground">
+					まずはキャラクターを作成して、トラッキングを開始しましょう。
+				</p>
+				<Dialog open={isWizardOpen} onOpenChange={setIsWizardOpen}>
+					<DialogTrigger asChild>
+						<Button size="lg" className="gap-2">
+							<PlusCircle className="w-5 h-5" />
+							キャラクターを作成する
+						</Button>
+					</DialogTrigger>
+					<DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+						<DialogHeader>
+							<DialogTitle>新規キャラクター登録</DialogTitle>
+						</DialogHeader>
+						<CharacterWizard
+							onComplete={() => {
+								setIsWizardOpen(false);
+								router.refresh();
+							}}
+						/>
+					</DialogContent>
+				</Dialog>
+			</div>
+		);
 	}
 
 	return (
-		<div>
-			{/* --- キャラクター選択エリア --- */}
-			<div className="bg-white p-4 rounded-lg shadow mb-6 border border-gray-200">
-				<h2 className="text-lg font-bold mb-2">操作キャラクター</h2>
+		<div className="space-y-6">
+			<div className="flex justify-between items-center">
+				<div>
+					<h2 className="text-2xl font-bold">アイテムトラッカー</h2>
+					<p className="text-muted-foreground">
+						キャラクター: <span className="font-medium text-foreground">{selectedCharacter.name}</span>
+					</p>
+				</div>
 
-				{characters.length === 0 ? (
-					<div className="text-center py-4">
-						<p className="mb-4 text-gray-600">まずはキャラクターを作成しましょう</p>
-						<button
-							onClick={createCharacter}
-							disabled={isCreating}
-							className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-						>
-							{isCreating ? '作成中...' : 'メインキャラを作成する'}
-						</button>
-					</div>
-				) : (
-					<div className="flex gap-4 items-center">
-						<select
-							value={selectedCharId}
-							onChange={(e) => setSelectedCharId(e.target.value)}
-							className="border p-2 rounded w-64"
-						>
-							{characters.map((c) => (
-								<option key={c.id} value={c.id}>{c.name}</option>
-							))}
-						</select>
-						<span className="text-sm text-green-600">● 選択中</span>
-					</div>
-				)}
+				{/* 追加のキャラクターを登録するためのボタン */}
+				<Dialog open={isWizardOpen} onOpenChange={setIsWizardOpen}>
+					<DialogTrigger asChild>
+						<Button variant="outline" size="sm" className="gap-2">
+							<UserPlus className="w-4 h-4" />
+							キャラ追加
+						</Button>
+					</DialogTrigger>
+					<DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+						<DialogHeader>
+							<DialogTitle>新規キャラクター登録</DialogTitle>
+						</DialogHeader>
+						<CharacterWizard
+							onComplete={() => {
+								setIsWizardOpen(false);
+								router.refresh();
+							}}
+						/>
+					</DialogContent>
+				</Dialog>
 			</div>
 
-			{/* --- アイテムリストエリア --- */}
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 				{items.map((item) => {
-					const currentQty = inventory[item.id] || 0
+					const qty = getQuantity(item.id);
+					const isLoading = loadingItems[`${selectedCharacter.id}-${item.id}`];
 
 					return (
-						<div key={item.id} className="bg-white p-4 rounded-lg shadow border border-gray-200">
-							<div className="flex justify-between items-start mb-2">
-								<span className={`text-xs px-2 py-1 rounded font-semibold ${item.category === 'currency' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'
-									}`}>
-									{item.category === 'currency' ? 'ポイント' : '素材/装備'}
-								</span>
-								<span className="text-xs text-gray-400">ID: {item.id}</span>
-							</div>
-
-							<h2 className="text-lg font-bold text-gray-800 mb-1">{item.name}</h2>
-							<div className="text-sm text-gray-600 mb-4">
-								スタック: {item.stack_size}
-							</div>
-
-							{/* 在庫入力コントロール */}
-							{characters.length > 0 && (
-								<div className="bg-gray-50 p-3 rounded border flex items-center justify-between">
-									<span className="text-sm font-bold text-gray-700">所持数:</span>
-									<div className="flex items-center gap-2">
-										<button
-											onClick={() => updateInventory(item.id, currentQty - 1)}
-											className="w-8 h-8 bg-gray-200 rounded hover:bg-gray-300 font-bold"
+						<Card key={item.id} className="overflow-hidden">
+							<CardHeader className="bg-muted/50 pb-3">
+								<div className="flex justify-between items-start">
+									<CardTitle className="text-lg">{item.name}</CardTitle>
+									<Badge variant="secondary">{item.category}</Badge>
+								</div>
+							</CardHeader>
+							<CardContent className="pt-4">
+								<div className="flex items-center justify-between">
+									<div className="text-3xl font-bold">
+										{isLoading ? (
+											<Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+										) : (
+											qty
+										)}
+									</div>
+									<div className="flex gap-2">
+										<Button
+											variant="outline"
+											size="icon"
+											onClick={() => handleUpdateQuantity(item.id, qty, -1)}
+											disabled={isLoading || qty <= 0}
 										>
-											-
-										</button>
-										<input
-											type="number"
-											value={currentQty}
-											onChange={(e) => updateInventory(item.id, parseInt(e.target.value) || 0)}
-											className="w-16 text-center border rounded p-1"
-										/>
-										<button
-											onClick={() => updateInventory(item.id, currentQty + 1)}
-											className="w-8 h-8 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 font-bold"
+											<MinusCircle className="w-5 h-5" />
+										</Button>
+										<Button
+											variant="outline"
+											size="icon"
+											onClick={() => handleUpdateQuantity(item.id, qty, 1)}
+											disabled={isLoading}
 										>
-											+
-										</button>
+											<PlusCircle className="w-5 h-5" />
+										</Button>
 									</div>
 								</div>
-							)}
-						</div>
-					)
+							</CardContent>
+						</Card>
+					);
 				})}
 			</div>
 		</div>
-	)
+	);
 }

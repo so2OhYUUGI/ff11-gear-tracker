@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import Dashboard from '@/components/Dashboard'
+import { Dashboard } from '@/components/Dashboard'
 
 export default async function Home() {
   const supabase = await createClient()
