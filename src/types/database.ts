@@ -1,18 +1,20 @@
+export interface Item {
+	id: string;
+	name: string;
+	category: string;
+}
+
+export interface Inventory {
+	character_id: string;
+	item_id: string;
+	quantity: number;
+	location: string;
+}
+
 export interface Character {
 	id: string;
 	user_id: string;
 	name: string;
 	world: string;
-	account_label: string | null;
-	race: string;
-	gender: string;
-	created_at: string;
-}
-
-export interface CharacterFormData {
-	name: string;
-	world: string;
-	account_label: string;
-	race: string;
-	gender: string;
+	inventories?: Inventory[];
 }

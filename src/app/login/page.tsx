@@ -1,109 +1,71 @@
-import { headers } from 'next/headers'
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
+import { login, signup } from "../actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertCircle, CheckCircle2 } from "lucide-react"; // アイコン
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-export default function Login({
+// searchParams を受け取る (Next.js 15 の仕様に合わせる)
+export default async function LoginPage({
 	searchParams,
 }: {
-	searchParams: Promise<{ message: string }> // Next.js 15ではPromiseになるため修正推奨ですが、今のままでも動く場合はそのままでOK
+	searchParams: Promise<{ error?: string; message?: string }>;
 }) {
-	// ログイン処理 (Server Action)
-	const signIn = async (formData: FormData) => {
-		'use server'
-
-		const email = formData.get('email') as string
-		const password = formData.get('password') as string
-
-		// await を追加
-		const supabase = await createClient()
-
-		const { error } = await supabase.auth.signInWithPassword({
-			email,
-			password,
-		})
-
-		if (error) {
-			// 日本語をエンコード
-			return redirect(`/login?message=${encodeURIComponent('ログインに失敗しました')}`)
-		}
-
-		return redirect('/')
-	}
-
-	// 新規登録処理 (Server Action)
-	const signUp = async (formData: FormData) => {
-		'use server'
-
-		// await を追加
-		const origin = (await headers()).get('origin')
-		const email = formData.get('email') as string
-		const password = formData.get('password') as string
-
-		// await を追加
-		const supabase = await createClient()
-
-		const { error } = await supabase.auth.signUp({
-			email,
-			password,
-			options: {
-				emailRedirectTo: `${origin}/auth/callback`,
-			},
-		})
-
-		if (error) {
-			// 日本語をエンコード
-			return redirect(`/login?message=${encodeURIComponent('登録エラーが発生しました: ' + error.message)}`)
-		}
-
-		// 日本語をエンコード
-		return redirect(`/login?message=${encodeURIComponent('確認メールを送信しました。メール内のリンクをクリックしてください。')}`)
-	}
+	const { error, message } = await searchParams;
 
 	return (
-		<div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2 mx-auto min-h-screen">
-			<form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
-				<h1 className="text-2xl font-bold mb-4 text-center">FF11 Gear Tracker</h1>
+		<div className="flex items-center justify-center min-h-screen bg-muted/40 p-4">
+			<Card className="w-full max-w-md shadow-lg">
+				<CardHeader className="space-y-1">
+					<CardTitle className="text-2xl font-bold text-center">FF11 Gear Tracker</CardTitle>
+					<CardDescription className="text-center">
+						アカウントにログインするか、新しく作成してください
+					</CardDescription>
+				</CardHeader>
 
-				<label className="text-md" htmlFor="email">
-					メールアドレス
-				</label>
-				<input
-					className="rounded-md px-4 py-2 bg-inherit border mb-6"
-					name="email"
-					placeholder="you@example.com"
-					required
-				/>
+				<CardContent className="space-y-4">
+					{/* --- エラーメッセージの表示 --- */}
+					{error && (
+						<Alert variant="destructive">
+							<AlertCircle className="h-4 w-4" />
+							<AlertTitle>エラー</AlertTitle>
+							<AlertDescription>{error}</AlertDescription>
+						</Alert>
+					)}
 
-				<label className="text-md" htmlFor="password">
-					パスワード
-				</label>
-				<input
-					className="rounded-md px-4 py-2 bg-inherit border mb-6"
-					type="password"
-					name="password"
-					placeholder="••••••••"
-					required
-				/>
+					{/* --- 成功メッセージの表示 (新規登録時など) --- */}
+					{message && (
+						<Alert className="border-green-500 text-green-600">
+							<CheckCircle2 className="h-4 w-4 stroke-green-600" />
+							<AlertTitle>通知</AlertTitle>
+							<AlertDescription>{message}</AlertDescription>
+						</Alert>
+					)}
 
-				<button
-					formAction={signIn}
-					className="bg-indigo-600 rounded-md px-4 py-2 text-white mb-2 hover:bg-indigo-700"
-				>
-					ログイン
-				</button>
+					<form className="space-y-4">
+						<div className="space-y-2">
+							<Label htmlFor="email">メールアドレス</Label>
+							<Input id="email" name="email" type="email" placeholder="name@example.com" required />
+						</div>
+						<div className="space-y-2">
+							<Label htmlFor="password">パスワード</Label>
+							<Input id="password" name="password" type="password" required />
+						</div>
 
-				<button
-					formAction={signUp}
-					className="border border-gray-400 rounded-md px-4 py-2 text-gray-700 hover:bg-gray-100 mb-2"
-				>
-					新規登録
-				</button>
+						<div className="flex flex-col gap-2 pt-2">
+							<Button formAction={login} className="w-full">ログイン</Button>
+							<Button formAction={signup} variant="outline" className="w-full">新規登録</Button>
+						</div>
+					</form>
+				</CardContent>
 
-				{/* 
-           Next.js 15の場合、searchParamsの取得方法が変わっていますが、
-           一旦簡易的な表示のため、そのままメッセージがあれば表示する形にします 
-        */}
-			</form>
+				<CardFooter>
+					<p className="text-xs text-center w-full text-muted-foreground">
+						※新規登録後は確認メールが送信されます。
+					</p>
+				</CardFooter>
+			</Card>
 		</div>
-	)
+	);
 }
