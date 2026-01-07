@@ -48,12 +48,17 @@ export function Dashboard({ characters, items, userTargets, user }: DashboardPro
 		if (!selectedCharacter) return;
 		const newQty = Math.max(0, currentQty + delta);
 		const key = `${selectedCharacter.id}-${itemId}`;
+
+		// ローカル状態を即座に更新（楽観的更新）
+		setInventoryMap(prev => ({ ...prev, [key]: newQty }));
 		setLoadingItems(prev => ({ ...prev, [itemId]: true }));
+
 		try {
 			await updateInventory(selectedCharacter.id, itemId, newQty);
-			setInventoryMap(prev => ({ ...prev, [key]: newQty }));
 		} catch (error) {
 			console.error("Update failed", error);
+			// 失敗した場合は元の値に戻す
+			setInventoryMap(prev => ({ ...prev, [key]: currentQty }));
 		} finally {
 			setLoadingItems(prev => ({ ...prev, [itemId]: false }));
 		}
@@ -63,9 +68,11 @@ export function Dashboard({ characters, items, userTargets, user }: DashboardPro
 		<div className="flex flex-col gap-6 w-full max-w-lg mx-auto pb-20 overflow-x-hidden">
 			<UserHeader email={user?.email} />
 
-			{userTargets.length > 0 && (
-				<ProjectSection userTargets={userTargets} getAccountTotal={getAccountTotal} />
-			)}
+			<ProjectSection
+				userTargets={userTargets}
+				getAccountTotal={getAccountTotal}
+				characters={characters}
+			/>
 
 			<CharacterControl
 				characters={characters}

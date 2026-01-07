@@ -113,3 +113,29 @@ export async function createCharacterAction(name: string, world: string, account
 	revalidatePath("/");
 	return data;
 }
+
+/**
+ * プロジェクト（目標）の新規作成
+ */
+export async function createTarget(characterId: string, groupId: string, priority: number) {
+	const supabase = await createClient();
+	const { data: { user } } = await supabase.auth.getUser();
+	if (!user) throw new Error("認証が必要です");
+
+	const { error } = await supabase
+		.from("user_targets")
+		.insert({
+			user_id: user.id,
+			character_id: characterId,
+			group_id: groupId,
+			priority: priority,
+			status: 'in_progress'
+		});
+
+	if (error) {
+		console.error("Target creation error:", error.message);
+		throw new Error("目標の作成に失敗しました");
+	}
+
+	revalidatePath("/");
+}
