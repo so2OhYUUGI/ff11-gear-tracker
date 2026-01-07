@@ -8,7 +8,6 @@ FF11（ファイナルファンタジーXI）のRMEA武器やAF/エンピ装束�
 - **Frontend**: Next.js 15 (App Router) / TypeScript
 - **Styling**: Tailwind CSS / shadcn/ui
 - **Backend/DB**: Supabase (PostgreSQL)
-- **ORM**: Prisma
 - **Auth**: Supabase Auth (Email/Password) + SSR (@supabase/ssr)
 - **State Management**: React Hooks (`useState`) + TanStack Query + Server Actions
 
