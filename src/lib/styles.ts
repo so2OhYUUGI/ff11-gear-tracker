@@ -44,5 +44,19 @@ export const UI_STYLE = {
 		icon: "h-8 w-8 rounded-md border border-border flex items-center justify-center",
 		add: "w-full h-9 border-dashed gap-2 font-bold text-[10px] uppercase flex items-center justify-center",
 		tab: "h-8 text-[10px] font-bold uppercase",
+	},
+
+	// --- 追加分 ---
+	buttonSecondary: "px-4 py-2 bg-slate-500 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2",
+	input: "px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm font-bold",
+	// --------------
+
+	title: "text-2xl font-bold text-slate-900 dark:text-white mb-6",
+	
+	badge: {
+		info: "px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-[10px] font-bold uppercase",
+		success: "px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded text-[10px] font-bold uppercase",
+		warning: "px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded text-[10px] font-bold uppercase",
+		secondary: "px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded text-[10px] font-bold uppercase",
 	}
 };

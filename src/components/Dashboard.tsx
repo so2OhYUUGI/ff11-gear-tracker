@@ -1,155 +1,148 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { updateInventory } from "../app/actions";
+import React, { useEffect, useState } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import { UI_STYLE } from '@/lib/styles';
 
-// 既存コンポーネント
-import { UserHeader } from "./dashboard/UserHeader";
-import { ProjectSection } from "./dashboard/ProjectSection";
-import { InventoryGrid } from "./dashboard/InventoryGrid";
-import { CharacterPortal } from "./dashboard/CharacterPortal";
-import { SessionHeader } from "./dashboard/SessionHeader";
+const MAJOR_SLOTS = [
+	{ id: 'head', name: '頭', icon: '🪖' },
+	{ id: 'body', name: '胴', icon: '👕' },
+	{ id: 'hands', name: '手', icon: '🧤' },
+	{ id: 'legs', name: '脚', icon: '👖' },
+	{ id: 'feet', name: '足', icon: '👟' },
+] as const;
 
-// 新規コンポーネント
-// 相対パスではなくエイリアスを使う
-import { GearPlanner } from "@/components/planner/GearPlanner";
-import { StatsSummary } from "@/components/planner/StatsSummary";
-import { JobSelector } from "@/components/planner/JobSelector";
-
-// shadcn UI
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CharacterWizard } from "./character/CharacterWizard";
-
-import { FullGearPlan, JobType, GearSlot, GearPlan } from "@/types/gear";
+const JOBS = [
+	'WAR', 'MNK', 'WHM', 'BLM', 'RDM', 'THF', 'PLD', 'DRK', 'BST', 'BRD',
+	'RNG', 'SAM', 'NIN', 'DRG', 'SMN', 'BLU', 'COR', 'PUP', 'DNC', 'SCH', 'GEO', 'RUN'
+];
 
 interface DashboardProps {
-	characters: any[];
-	items: any[];
-	userTargets: any[];
-	user: any;
+	characterId: string;
+	onBack: () => void;
 }
 
-export function Dashboard({ characters, items, userTargets, user }: DashboardProps) {
-	const [activeCharId, setActiveCharId] = useState<string | null>(null);
-	const [inventoryMap, setInventoryMap] = useState<Record<string, number>>({});
-	const [loadingItems, setLoadingItems] = useState<Record<string, boolean>>({});
-	const [isWizardOpen, setIsWizardOpen] = useState(false);
+export default function Dashboard({ characterId, onBack }: DashboardProps) {
+	const supabase = createClient();
 
-	// --- 計画用の状態 ---
-	const [selectedJob, setSelectedJob] = useState<JobType>("WAR");	// 各部位でどの装備(AF/Relic/Empy)のどの段階(+0~+3)を選択しているか
-	// 本来はDBから初期値を取得する
-	const [plan, setPlan] = useState<Record<string, { type: string; stage: string }>>({
-		Head: { type: "AF", stage: "+3" },
-		Body: { type: "Relic", stage: "+3" },
-		Hands: { type: "Empy", stage: "+3" },
-		Legs: { type: "AF", stage: "+3" },
-		Feet: { type: "AF", stage: "+3" },
-	});
+	const [character, setCharacter] = useState<any>(null);
+	const [gears, setGears] = useState<Record<string, any>>({});
+	const [currentJob, setCurrentJob] = useState('WAR');
+	const [loading, setLoading] = useState(true);
 
-	const router = useRouter();
-	const activeCharacter = characters.find((c) => c.id === activeCharId);
+	useEffect(() => {
+		async function fetchData() {
+			if (!characterId) return;
+			setLoading(true);
+			try {
+				const { data: charData } = await supabase
+					.from('characters')
+					.select('*')
+					.eq('id', characterId)
+					.single();
+				if (charData) setCharacter(charData);
 
-	// --- 既存ロジック ---
-	const getAccountTotal = (itemId: string) => {
-		return characters.reduce((sum: number, char: any) => {
-			const inv = char.inventories?.find((i: any) => i.item_id === itemId);
-			return sum + (inv ? inv.quantity : 0);
-		}, 0);
-	};
+				const { data: gearData } = await supabase
+					.from('character_gears')
+					.select(`slot, items ( name_ja, tier, category )`)
+					.eq('character_id', characterId)
+					.eq('job_code', currentJob);
 
-	const getItemBreakdown = (itemId: string) => {
-		return characters
-			.map((char) => ({
-				name: char.name,
-				quantity: char.inventories?.find((i: any) => i.item_id === itemId)?.quantity || 0,
-				isCurrent: char.id === activeCharId,
-			}))
-			.filter((entry) => entry.quantity > 0);
-	};
-
-	const getQuantity = (itemId: string) => {
-		if (!activeCharacter) return 0;
-		const key = `${activeCharacter.id}-${itemId}`;
-		if (inventoryMap[key] !== undefined) return inventoryMap[key];
-		const inv = activeCharacter.inventories?.find((i: any) => i.item_id === itemId);
-		return inv ? inv.quantity : 0;
-	};
-
-	const handleUpdate = async (itemId: string, currentQty: number, delta: number) => {
-		if (!activeCharacter) return;
-		const newQty = Math.max(0, currentQty + delta);
-		const key = `${activeCharacter.id}-${itemId}`;
-		setInventoryMap((prev) => ({ ...prev, [key]: newQty }));
-		try {
-			await updateInventory(activeCharacter.id, itemId, newQty);
-		} catch (error) {
-			console.error("Update failed", error);
+				if (gearData) {
+					const gearMap = (gearData as any[]).reduce((acc, gear) => {
+						acc[gear.slot] = gear;
+						return acc;
+					}, {} as Record<string, any>);
+					setGears(gearMap);
+				}
+			} finally {
+				setLoading(false);
+			}
 		}
-	};
-
-	if (!activeCharId) {
-		return (
-			<div className="flex flex-col gap-6 w-full max-w-md mx-auto pb-10 px-1">
-				<UserHeader email={user?.email} />
-				<CharacterPortal
-					characters={characters}
-					userTargets={userTargets}
-					onSelect={(id: string) => setActiveCharId(id)}
-					onAddChar={() => setIsWizardOpen(true)}
-					getAccountTotal={getAccountTotal}
-				/>
-				<Dialog open={isWizardOpen} onOpenChange={setIsWizardOpen}>
-					<DialogContent className="sm:max-w-[400px] w-[95vw] rounded-xl">
-						<DialogHeader><DialogTitle>新規キャラクター登録</DialogTitle></DialogHeader>
-						<CharacterWizard onComplete={() => { setIsWizardOpen(false); router.refresh(); }} onCancel={() => setIsWizardOpen(false)} />
-					</DialogContent>
-				</Dialog>
-			</div>
-		);
-	}
+		fetchData();
+	}, [characterId, currentJob, supabase]);
 
 	return (
-		<div className="flex flex-col gap-6 w-full max-w-md mx-auto pb-20 px-1">
-			<SessionHeader character={activeCharacter} onBack={() => setActiveCharId(null)} />
+		<div className={UI_STYLE.container}>
+			{/* 1. 戻るボタン & ジョブ選択 (定義済みのスタイルを使用) */}
+			<div className="flex justify-between items-center mb-6">
+				<button
+					onClick={onBack}
+					className={UI_STYLE.buttonSecondary}
+				>
+					← 戻る
+				</button>
 
-			<Tabs defaultValue="planner" className="w-full">
-				<TabsList className="grid w-full grid-cols-2">
-					<TabsTrigger value="planner">装備計画</TabsTrigger>
-					<TabsTrigger value="materials">在庫参照</TabsTrigger>
-				</TabsList>
+				<div className="flex items-center gap-2">
+					<label className="text-xs font-bold text-slate-500">JOB</label>
+					<select
+						value={currentJob}
+						onChange={(e) => setCurrentJob(e.target.value)}
+						className={UI_STYLE.input}
+					>
+						{JOBS.map(job => (
+							<option key={job} value={job}>{job}</option>
+						))}
+					</select>
+				</div>
+			</div>
 
-				<TabsContent value="planner" className="space-y-6 mt-4">
-					<JobSelector selectedJob={selectedJob} onSelect={setSelectedJob} />
+			{/* 2. キャラクター情報カード */}
+			<div className={`${UI_STYLE.card} bg-gradient-to-br from-slate-800 to-slate-900 border-none mb-8`}>
+				<div className="flex justify-between items-end">
+					<div>
+						<p className="text-blue-400 text-[10px] font-black uppercase tracking-widest mb-1">
+							{character?.world || 'Vana\'diel'}
+						</p>
+						<h1 className={`${UI_STYLE.title} text-white mb-0`}>
+							{character?.name || '---'}
+						</h1>
+					</div>
+					<div className="text-4xl font-black text-white/10 italic select-none">
+						{currentJob}
+					</div>
+				</div>
+			</div>
 
-					{/* 合計ステータス表示 */}
-					<StatsSummary plan={plan} job={selectedJob} />
+			{/* 3. 装備リスト (バッジも UI_STYLE を使用) */}
+			<div className="space-y-3">
+				<h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
+					Equipment Status
+				</h2>
 
-					{/* 装備選択マトリクス */}
-					<GearPlanner
-						job={selectedJob}
-						plan={plan}
-						onPlanChange={(slot, val) => setPlan(prev => ({ ...prev, [slot]: val }))}
-					/>
-				</TabsContent>
+				{MAJOR_SLOTS.map((slot) => {
+					const gear = gears[slot.id];
+					return (
+						<div
+							key={slot.id}
+							className={`${UI_STYLE.card} flex items-center p-4 hover:border-blue-500 transition-all cursor-pointer border-l-4 ${gear ? 'border-l-blue-500' : 'border-l-slate-300'}`}
+						>
+							<div className="w-12 h-12 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 rounded border border-slate-100 dark:border-slate-800 mr-4">
+								<span className="text-xl">{slot.icon}</span>
+								<span className="text-[9px] font-bold text-slate-400 uppercase">{slot.name}</span>
+							</div>
 
-				<TabsContent value="materials" className="space-y-6 mt-4">
-					<ProjectSection
-						userTargets={userTargets}
-						getAccountTotal={getAccountTotal}
-						getItemBreakdown={getItemBreakdown}
-						selectedCharId={activeCharId}
-						characters={characters}
-					/>
-					<InventoryGrid
-						items={items}
-						getQuantity={getQuantity}
-						loadingItems={loadingItems}
-						onUpdate={handleUpdate}
-					/>
-				</TabsContent>
-			</Tabs>
+							<div className="flex-grow">
+								{gear ? (
+									<div>
+										<div className="font-bold text-slate-800 dark:text-slate-100 mb-1">
+											{gear.items?.name_ja}
+										</div>
+										<div className="flex gap-2">
+											<span className={UI_STYLE.badge.info}>{gear.items?.category}</span>
+											<span className={UI_STYLE.badge.secondary}>
+												{gear.items?.tier === 0 ? 'NQ' : `+${gear.items?.tier}`}
+											</span>
+										</div>
+									</div>
+								) : (
+									<div className="text-slate-400 text-sm italic">未登録</div>
+								)}
+							</div>
+						</div>
+					);
+				})}
+			</div>
 		</div>
 	);
 }

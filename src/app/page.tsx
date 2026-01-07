@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { Dashboard } from "@/components/Dashboard";
+import Dashboard  from "@/components/Dashboard";
 import { redirect } from "next/navigation";
 
 //export const revalidate = 0;
@@ -49,12 +49,16 @@ export default async function Home() {
     <main className="min-h-screen bg-background">
       {/* 画面全体の横幅を制御するコンテナ */}
       <div className="max-w-2xl mx-auto px-4 py-6 sm:py-10">
-        <Dashboard
-          characters={characters || []}
-          items={items || []}
-          userTargets={userTargets || []}
-          user={user}
-        />
+        {characters && characters.length > 0 ? (
+          <Dashboard
+            characterId={characters[0].id}
+          />
+        ) : (
+          <div className="p-8 text-center">
+            <p>キャラクターが登録されていません。</p>
+            <a href="/setup" className="text-blue-500 underline">キャラクターを作成する</a>
+          </div>
+        )}
       </div>
     </main>
   );
