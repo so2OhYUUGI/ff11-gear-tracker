@@ -1,101 +1,84 @@
-# FF11 ギアトラッカー 開発ドキュメント (DEVELOPMENT_LOG)
+# DEVELOPMENT_LOG.md
+
+## ⚠️ AIアシスタントへの重要指示（メンテナンスポリシー）
+**このドキュメントは本プロジェクトの「設計図」兼「開発履歴」です。AIアシスタントは以下のルールを厳守すること：**
+
+1. **情報の永続性**: 「2. ディレクトリ構成」および「3. データベース設計」のセクションは、プロジェクトの根幹である。**ユーザーから明示的な指示がない限り、絶対に削除・省略・簡略化しないこと。**
+2. **情報の同期**: 新しいコードの確認や設計変更のたびに、当該セクションを最新の状態に更新すること。
+3. **リスト形式の遵守**: ディレクトリ構成の表示にエスケープ文字（ツリー記号）や <pre> タグを使用せず、箇条書きリスト形式で表現すること。
+4. **継続性の確保**: セッション再開時、AIは本ドキュメントを最優先で読み込み、設計思想を理解した上で作業すること。
+
+---
 
 ## 1. プロジェクト概要
-FF11における「RMEA武器」や「AF・レリック・エンピリアン装束」の膨大な強化工程を管理するための進捗トラッキングツール。
-
-*   **目的**: 複数キャラクター（倉庫キャラ含む）の在庫を一元管理し、目標とする装備完成までに必要な素材の「最短経路」を可視化する。
-*   **コア価値**: プレイヤーが「次に何をすべきか」を判断するための意思決定をサポートする。
-
----
-
-## 2. 重点管理項目（開発時の必須意識事項）
-本プロジェクトの開発において、以下の2点を「開発の憲法」として最優先します。これらを変更・無視する場合は慎重な検討が必要です。
-
-### ■ 型定義の徹底 (src/types/)
-*   **型安全の追求**: `any` の使用は原則禁止。
-*   **ドメイン知識の集約**: `JobType`, `GearSlot`, `GearStage` などのFF11特有の定義はすべて `src/types/gear.ts` に集約する。
-*   **恩恵**: 装備段階の入力ミスをエディタレベルで防ぎ、確実なステータス計算を実現する。
-
-### ■ デザインシステム (src/lib/styles.ts)
-*   **UI_STYLEの遵守**: 直接 Tailwind クラスを書き込む前に、必ず `styles.ts` の定義を確認する。
-*   **一貫性の維持**: カードの質感、テキストの強調、フォントスタイル（mono, tiny, quantity等）は、すべて定義済みのスタイルオブジェクトを介して適用する。
-*   **FF11らしさ**: 重厚で視認性の高い、ゲーム内UIをリスペクトしたデザインを維持する。
+FF11のRME/AF装束強化進捗トラッカー。
+- **Framework**: Next.js 15 (App Router / React 19)
+- **Database/Auth**: Supabase
+- **Design System**: `src/lib/styles.ts` (`UI_STYLE`) による一括管理
 
 ---
 
-## 3. 技術スタック
-*   **Framework**: Next.js 15 (App Router)
-*   **Language**: TypeScript (Strict Mode)
-*   **Database & Auth**: Supabase (PostgreSQL)
-*   **Styling**: Tailwind CSS / lucide-react (Icons)
-*   **Components**: shadcn/ui (Radix UI ベース)
-*   **Deployment**: Vercel
+## 2. ディレクトリ構成
+- src/
+  - app/ (Server Components / Next.js 15)
+    - page.tsx : 認証チェック・初期データフェッチ担当
+    - (auth)/ : 認証・ログインフロー関連
+  - components/ (Client Components)
+    - AppHeader.tsx : 共通ヘッダー（ログアウト・ユーザー情報）
+    - CharacterManager.tsx : 画面遷移司令塔（キャラ一覧 ↔ Dashboard）
+    - Dashboard.tsx : 装備管理メイン画面（部位スロット軸）
+  - lib/ (共通ユーティリティ・定義)
+    - styles.ts : デザイン定義 (UI_STYLE) - インラインスタイル禁止
+    - constants.ts : ジョブ・スロット・アイテム定義（予定）
+  - utils/
+    - supabase/ : Supabase SDK設定（Server/Client）
 
 ---
 
-## 4. データベース設計（主要テーブル）
-*   **profiles**: ユーザー基本情報。
-*   **characters**: プレイヤーが所有するキャラクター（メイン・倉庫）。
-*   **items**: 素材や装備品のマスターデータ。
-*   **inventories**: キャラクターごとのアイテム所持数量。
-*   **user_targets**: ユーザーが設定した作成目標（イオニック、RMEA等）。
-*   **gear_progress (予定)**: ジョブ・部位ごとの現在の強化段階を保存。
+## 3. データベース設計 (Schema)
+
+### Enum: equipment_slot
+- 定義: `main, sub, range, ammo, head, neck, ear1, ear2, body, hands, ring1, ring2, back, waist, legs, feet`
+
+### Table: items (装備マスタ)
+- id: text (PK) - アイテム識別子
+- name: text (NOT NULL) - 内部用/英語名称
+- name_ja: text - 日本語表示名
+- slot: equipment_slot - 部位固定
+- category: text - カテゴリ（AF, Relic, Empy, etc.）
+- tier: integer - 強化段階 (0:NQ, 1:+1, 2:+2, 3:+3)
+- jobs: text[] - 装備可能ジョブの配列
+
+### Table: characters (キャラクター)
+- id: uuid (PK)
+- user_id: uuid (FK)
+- name: text
+- world: text
+
+### Table: character_gears (装備状況)
+- id: uuid (PK)
+- character_id: uuid (FK -> characters.id)
+- job_code: text (WAR, MNK, etc.)
+- slot: equipment_slot
+- item_id: text (FK -> items.id)
+- 制約: `UNIQUE(character_id, job_code, slot)` - 1キャラ1ジョブ1部位に1装備を保証
 
 ---
 
-## 5. ディレクトリ構成
-*   **src/**
-    *   **app/** : ルーティング、Server Actions (`actions.ts`)
-    *   **components/** : UIパーツ
-        *   **dashboard/** : 在庫一覧、共通ヘッダー
-        *   **planner/** : 【重点】ジョブ選択、装備計画、ステータス比較
-        *   **character/** : キャラクター作成・管理
-        *   **ui/** : shadcn/ui 基盤パーツ
-    *   **lib/** : 共通ユーティリティ
-        *   **styles.ts** : 【重点】UIスタイル定義 (`UI_STYLE`)
-        *   **supabase.ts** : DBクライアント設定
-    *   **types/** : 【重点】型定義ファイル
-        *   **gear.ts** : ゲーム内ドメイン（ジョブ・装備）の型定義
-    *   **hooks/** : カスタムフック
+## 4. 開発履歴
+
+### [2026-01-07] アーキテクチャの刷新と装備軸UIの導入
+- **Server/Clientの完全分離**: page.tsx でのデータフェッチと CharacterManager でのステート管理を明確化。
+- **UI/UXリニューアル**: 部位スロット軸（頭胴手脚足）のUIへ移行。AppHeader による操作系の集約。
+- **デザインシステムの強化**: UI_STYLE の定義拡張（buttonSecondary, input, header等）と、白飛び（コントラスト不足）問題の修正。
+
+### [2025以前] 初期基盤
+- SupabaseによるAuth・DB基盤構築、複数ゲームアカウント対応。
 
 ---
 
-## 6. 開発履歴
-
-### [2026-01-07] 装備プランナー実装とシステム基盤の刷新
-*   **新機能：ジョブ装備プランナー**
-    *   `JobSelector`: 22ジョブの切り替えインターフェースを実装。
-    *   `GearPlanner`: 部位別（5部位）× 系統別（AF/Relic/Empy）の強化段階選択機能を実装。
-    *   `StatsSummary`: 選択プランに基づいたステータス合算表示のプロトタイプを作成。
-*   **UI/UXの改善**
-    *   `Tabs` コンポーネントによる「装備計画」と「在庫参照」の画面分離。
-    *   `UI_STYLE` による全体的なデザインのブラッシュアップ。
-*   **コードベースの強化**
-    *   `src/types/gear.ts` を新設し、`any` を排除した型安全な実装へ移行。
-
-### [2024-12] プロジェクト基盤構築
-*   Supabase を利用した認証基盤およびデータベース連携の実装。
-*   複数キャラクターの在庫合算表示および在庫更新機能の実装。
-*   キャラクター登録ウィザードの実装。
-
----
-
-## 7. 今後のロードマップ（Todo）
-
-### 優先度：高
-*   **プランデータの永続化**: プランナーで選択した装備構成を Supabase に保存し、ログイン時に復元可能にする。
-*   **装備マスタデータの整備**: 各装備の段階ごとの性能数値を JSON/DB で定義し、ステータス計算を正確にする。
-
-### 優先度：中
-*   **素材計算エンジンの統合**: 計画した装備段階（例：+3）に必要な素材と、現在の在庫を比較し、不足数を自動算出する。
-*   **外部インポート機能の検討**: ゲーム内データを効率的に取り込む手段の模索。
-
----
-
-### 💡 開発者メモ
-本ツールは「素材管理」から「戦略的プランニング」へと進化を続けています。常にプレイヤー目線に立ち、煩雑な計算をアプリが肩代わりすることで、ヴァナ・ディールでの冒険をより快適にすることを目指します。
-
-### 次回へ向けて
-* DB準備: Supabaseで character_gear_plans テーブルを作る（キャラID, 部位, 種類, 段階 を保存）。
-* 型適用: src/types/gear.ts を使って、DBから返ってくるデータの型を定義する。
-* 保存処理: GearPlanner で選択を変えるたびに、Server Actions経由でDBを叩く。
+## 5. 次のフェーズ (TODO)
+- [ ] **装備変更モーダル**: スロットクリック時に部位・ジョブ適合アイテムを抽出・保存する機能。
+- [ ] **定数ファイルの独立**: Dashboard.tsx 内の JOBS 配列等を lib/constants.ts へ移動。
+- [ ] **インラインスタイルの完全廃止**: Dashboard.tsx 等に残るベタ書きクラスを UI_STYLE へ完全移行。
+- [ ] **データインポート**: RME/AF系アイテムマスタのバッチ登録。
