@@ -168,4 +168,15 @@ export const UI_STYLE = {
 		inactive: "text-slate-400 dark:text-slate-500 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white",
 	},
 
+	// アカウント管理画面用
+	accountRow: {
+		container: "flex items-center justify-between p-4 transition-all border-l-[6px] hover:shadow-md",
+		info: "flex items-center gap-4 flex-1",
+		colorPreview: "w-10 h-10 rounded-full shadow-inner border border-black/10 flex items-center justify-center text-white text-xs",
+		name: "font-black text-slate-800 dark:text-white text-lg leading-tight",
+		meta: "text-[10px] font-mono text-slate-400 uppercase tracking-tighter mt-1",
+		stats: "flex items-center gap-6 px-6 border-x border-border/60",
+		actions: "flex items-center gap-2 pl-4",
+	},
+
 };

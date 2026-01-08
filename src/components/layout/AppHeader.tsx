@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/client";
 import { UI_STYLE } from "@/lib/styles";
+import Link from "next/link";
 
 export default function AppHeader({ email }: { email?: string }) {
 	const handleLogout = async () => {
@@ -14,15 +15,27 @@ export default function AppHeader({ email }: { email?: string }) {
 		<header className={UI_STYLE.header.app.wrapper}>
 			<div className={UI_STYLE.header.app.inner}>
 				<div className="flex items-center gap-2">
-					<span className={UI_STYLE.header.app.logo}>FF11 Tracker</span>
+					<Link href="/" className={UI_STYLE.header.app.logo}>FF11 Tracker</Link>
 					{email && <span className="text-[10px] font-bold text-slate-400 hidden sm:inline">| {email}</span>}
 				</div>
-				<button
-					onClick={handleLogout}
-					className={UI_STYLE.header.app.logout}
-				>
-					LOGOUT ⎋
-				</button>
+
+				<div className="flex items-center gap-3">
+					{/* 設定ページへのリンクを追加 */}
+					<Link
+						href="/settings"
+						className="text-slate-400 hover:text-blue-500 transition-colors p-1"
+						title="アプリ設定"
+					>
+						<span className="text-lg">⚙️</span>
+					</Link>
+
+					<button
+						onClick={handleLogout}
+						className={UI_STYLE.header.app.logout}
+					>
+						LOGOUT ⎋
+					</button>
+				</div>
 			</div>
 		</header>
 	);

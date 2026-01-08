@@ -65,7 +65,7 @@ export default function CharacterManager({ groupedCharacters }: CharacterManager
 				))}
 
 				<a
-					href="/setup"
+					href="/characters/create"
 					className={`${UI_STYLE.card} border-dashed border-2 border-slate-200 flex flex-col items-center justify-center text-slate-400 hover:text-blue-500 hover:border-blue-500 transition-all min-h-[140px] opacity-60 hover:opacity-100`}
 				>
 					<span className="text-2xl font-bold">+</span>
