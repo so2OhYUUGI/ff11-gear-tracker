@@ -1,19 +1,47 @@
 export const UI_STYLE = {
-	// コンテナのパディングを調整（上下の余白を管理しやすくする）
-	container: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8", // 上下のパディング(p-4)を削除
+	container: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8",
+	pageWrapper: "pt-4 pb-24 md:pb-10",
 
-	// ページ全体の基本余白（ページごとにトップの余白を当てる）
-	pageWrapper: "pt-4 pb-10",
+	// アプリ全体の枠組み
+	shell: {
+		wrapper: "flex h-screen w-full overflow-hidden bg-background",
+		main: "flex flex-col flex-1 min-w-0 h-full relative",
+		content: "flex-1 overflow-y-auto",
+	},
 
+	// ヘッダー・セッション表示
 	header: {
-		// ...既存...
-		// 固定位置を調整。ヘッダーの高さ(約64px/16)を考慮
-		stickyWrapper: "sticky top-0 z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8",
-		// 巨大装飾文字
+		app: {
+			wrapper: "sticky top-0 z-40 w-full bg-background/95 backdrop-blur border-b border-border/60",
+			inner: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between",
+			logo: "text-lg font-black italic tracking-tighter text-blue-600",
+			logout: "text-[10px] font-black text-slate-500 hover:text-red-500 transition-colors py-1 px-3 border border-slate-200 dark:border-slate-700 rounded-full bg-white dark:bg-slate-800"
+		},
+		stickyWrapper: "sticky top-14 z-30 bg-background/95 backdrop-blur py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8",
+		session: "flex items-center justify-between bg-blue-600 text-white p-4 rounded-xl shadow-lg relative overflow-hidden",
+		user: "flex items-center justify-between bg-muted/40 p-3 rounded-lg border border-border/60 mt-2",
 		decorationText: "absolute right-4 bottom-0 text-7xl font-black italic opacity-10 select-none text-white tracking-tighter pointer-events-none",
-		session: "flex items-center justify-between bg-blue-600 text-white p-4 rounded-xl shadow-lg mb-2 relative overflow-hidden",
-		user: "flex items-center justify-between bg-muted/40 p-3 rounded-lg border border-border/60 mb-2",
-		backButton: "h-9 w-9 bg-primary-foreground/10 hover:bg-primary-foreground/20 text-primary-foreground rounded-full shrink-0 border-none flex items-center justify-center",
+		backButton: "h-9 w-9 bg-slate-800 hover:bg-black text-white rounded-full flex items-center justify-center font-bold shadow-lg transition-transform active:scale-95",
+	},
+
+	// モーダル
+	modal: {
+		overlay: "fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm",
+		content: "bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] flex flex-col p-6 border border-slate-200 dark:border-slate-700",
+		header: "flex justify-between items-center mb-6",
+		close: "text-slate-400 hover:text-slate-600 text-xl transition-colors",
+		body: "flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar",
+		empty: "py-10 text-center text-slate-400 text-sm italic",
+		itemBtn: "w-full p-4 text-left border border-slate-200 dark:border-slate-700 rounded-xl hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all group flex justify-between items-center",
+		removeBtn: "w-full p-4 text-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 transition-all text-[10px] font-black text-slate-400 uppercase tracking-widest"
+	},
+
+	// キャラクターカード
+	characterCard: {
+		wrapper: "group relative flex flex-col justify-between min-h-[140px] transition-all duration-300 border-t-[8px] border-x border-b border-x-slate-200 border-b-slate-200 dark:border-x-slate-800 dark:border-b-slate-800 hover:shadow-lg bg-white dark:bg-slate-900",
+		name: "text-lg font-black text-slate-900 dark:text-white leading-tight group-hover:text-blue-600 transition-colors line-clamp-2 break-all",
+		jobBadge: "absolute top-2 right-2 bg-slate-100/90 dark:bg-slate-800/90 backdrop-blur-sm px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-[10px] font-black italic text-slate-500 shadow-sm z-20",
+		accountBadge: "inline-flex items-center px-2 py-0.5 rounded text-[8px] font-black text-white uppercase tracking-widest mt-2",
 	},
 
 	// 共通の「アプリヘッダー」用スタイルを新設
@@ -71,13 +99,6 @@ export const UI_STYLE = {
 		secondary: "px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded text-[10px] font-bold uppercase border border-slate-200 dark:border-slate-600",
 	},
 
-	shell: {
-		// 既存の背景色と干渉しないよう bg-background を活用
-		wrapper: "flex h-screen w-full overflow-hidden bg-background",
-		main: "flex flex-col flex-1 min-w-0 h-full relative",
-		content: "flex-1 overflow-y-auto p-4 pb-24 md:pb-6", // スマホ時のボトムナビ分の余白
-	},
-
 	nav: {
 		sidebar: "hidden md:flex w-64 flex-col bg-slate-900 text-slate-300 border-r border-slate-800 shrink-0",
 		bottom: "md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex justify-around items-center h-16 px-2 z-[100]",
@@ -85,21 +106,6 @@ export const UI_STYLE = {
 		itemActive: "bg-blue-600 text-white",
 		itemInactive: "text-slate-500 md:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800",
 		label: "text-[10px] md:text-sm font-bold uppercase tracking-tighter md:tracking-normal",
-	},
-
-	// キャラクター選択カード専用
-	characterCard: {
-		wrapper: "group relative flex flex-col justify-between min-h-[140px] transition-all duration-300 border-t-[8px] border-x border-b border-x-slate-200 border-b-slate-200 dark:border-x-slate-800 dark:border-b-slate-800 hover:shadow-lg bg-white dark:bg-slate-900",
-
-		// truncateを解除し、2行までの折り返しを許可（長い名前対策）
-		name: "text-lg font-black text-slate-900 dark:text-white leading-tight group-hover:text-blue-600 transition-colors line-clamp-2 break-all",
-
-		// 絶対配置で右上に浮かせる
-		jobBadge: "absolute top-2 right-2 bg-slate-100/90 dark:bg-slate-800/90 backdrop-blur-sm px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-[10px] font-black italic text-slate-500 shadow-sm z-20",
-
-		accountBadge: "inline-flex items-center px-2 py-0.5 rounded text-[8px] font-black text-white uppercase tracking-widest mt-2",
-		world: "text-[9px] font-bold uppercase text-slate-400 tracking-wider mb-1",
-		selectText: "text-[10px] font-black text-blue-500 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0"
 	},
 
 	// タブ関連

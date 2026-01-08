@@ -4,20 +4,18 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { UI_STYLE } from '@/lib/styles';
 import { JobCode } from '@/lib/constants/jobs';
+import { GearCategory } from '@/lib/types'; // libからインポート
+import { formatGearMap } from '@/lib/utils'; // libからインポート
 import JobSelector from './JobSelector';
 import GearSlotList from './GearSlotList';
 import GearEditModal from './GearEditModal';
 
-export type GearCategory = 'AF' | 'Relic' | 'Empyrean';
-
 export default function GearTrackerContainer({ initialCharacters, initialCharId }: { initialCharacters: any[], initialCharId?: string | null }) {
 	const supabase = createClient();
 	const [selectedCharId, setSelectedCharId] = useState(initialCharId || initialCharacters[0]?.id || '');
-
 	const char = initialCharacters.find(c => c.id === selectedCharId);
 	const [currentJob, setCurrentJob] = useState<JobCode>((char?.last_job_code as JobCode) || 'WAR');
 	const [activeCategory, setActiveCategory] = useState<GearCategory>('AF');
-
 	const [gears, setGears] = useState<Record<string, any>>({});
 	const [loading, setLoading] = useState(false);
 	const [editingSlot, setEditingSlot] = useState<{ id: string, name: string } | null>(null);
@@ -31,15 +29,7 @@ export default function GearTrackerContainer({ initialCharacters, initialCharId 
 			.eq('character_id', selectedCharId)
 			.eq('job_code', currentJob);
 
-		if (data) {
-			const gearMap = (data as any[]).reduce((acc, gear) => {
-				acc[gear.slot] = gear;
-				return acc;
-			}, {} as Record<string, any>);
-			setGears(gearMap);
-		} else {
-			setGears({});
-		}
+		setGears(data ? formatGearMap(data as any) : {});
 		setLoading(false);
 	};
 
@@ -52,10 +42,7 @@ export default function GearTrackerContainer({ initialCharacters, initialCharId 
 
 	return (
 		<div className={`${UI_STYLE.container} ${UI_STYLE.pageWrapper}`}>
-
-			{/* 1. 固定ヘッダーセクション（キャラクターカード + 操作バー） */}
-			{/* top-14 を指定することで AppHeader の直下に固定されます */}
-			<div className={`${UI_STYLE.header.stickyWrapper} top-14`}>
+			<div className={UI_STYLE.header.stickyWrapper}>
 				{char && (
 					<div className={UI_STYLE.header.session}>
 						<div className="flex-1 z-10 min-w-0">
@@ -66,25 +53,15 @@ export default function GearTrackerContainer({ initialCharacters, initialCharId 
 								{char.name}
 							</h1>
 						</div>
-						{/* 装飾用の巨大文字 */}
-						<div className={UI_STYLE.header.decorationText}>
-							{currentJob}
-						</div>
+						<div className={UI_STYLE.header.decorationText}>{currentJob}</div>
 					</div>
 				)}
 
-				{/* 操作バー: キャラクターとジョブの切り替え */}
-				<div className={`${UI_STYLE.header.user} mb-0 flex-wrap gap-4 py-3`}>
+				<div className={UI_STYLE.header.user}>
 					<div className="flex items-center gap-2">
 						<label className={UI_STYLE.label}>Character</label>
-						<select
-							value={selectedCharId}
-							onChange={(e) => setSelectedCharId(e.target.value)}
-							className={UI_STYLE.input}
-						>
-							{initialCharacters.map(c => (
-								<option key={c.id} value={c.id}>{c.name}</option>
-							))}
+						<select value={selectedCharId} onChange={(e) => setSelectedCharId(e.target.value)} className={UI_STYLE.input}>
+							{initialCharacters.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
 						</select>
 					</div>
 					<JobSelector currentJob={currentJob} onJobChange={handleJobChange} />
