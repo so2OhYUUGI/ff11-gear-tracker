@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { UI_STYLE } from '@/lib/styles';
-import { GearCategory, Character } from '@/lib/types';
+import { GameAccount, Character } from '@/lib/types';
 import { GEAR_CATEGORIES } from '@/lib/constants'; // 追加
 import { useGearTracker } from './hooks/useGearTracker';
 import JobSelector from './JobSelector';

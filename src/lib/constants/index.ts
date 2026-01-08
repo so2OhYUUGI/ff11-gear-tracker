@@ -26,6 +26,8 @@ export const WORLDS = [
 ] as const;
 
 export const RACES = ['Hume', 'Elvaan', 'Tarutaru', 'Mithra', 'Galka'] as const;
+export type Race = typeof RACES[number];
+export type Gender = 'Male' | 'Female';
 
 // 4. 装備・ティア定義
 export const GEAR_CATEGORIES: GearCategory[] = ['AF', 'Relic', 'Empyrean'];

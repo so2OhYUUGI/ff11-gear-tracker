@@ -1,7 +1,7 @@
 'use client';
 
 import { UI_STYLE } from '@/lib/styles';
-import { MAJOR_SLOTS } from '@/lib/constants/slots';
+import { MAJOR_SLOTS } from '@/lib/constants/';
 import { CharacterGear } from '@/lib/types';
 
 interface GearSlotListProps {

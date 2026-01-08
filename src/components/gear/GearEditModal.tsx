@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { UI_STYLE } from '@/lib/styles';
 import { GearCategory, GearItem } from '@/lib/types';
-import { JOB_MIN_TIER_RULES } from '@/lib/constants/gear';
+import { JOB_MIN_TIER_RULES } from '@/lib/constants/';
 
 interface GearEditModalProps {
 	isOpen: boolean;

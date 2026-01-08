@@ -48,5 +48,4 @@ export default async function GearPage(props: {
 			/>
 		</Suspense>
 	);
-	);
 }

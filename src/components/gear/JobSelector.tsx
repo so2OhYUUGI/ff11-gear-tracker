@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { UI_STYLE } from '@/lib/styles';
-import { JOBS, JobCode } from '@/lib/constants/jobs';
+import { JOBS, JobCode } from '@/lib/constants/';
 
 interface JobSelectorProps {
 	currentJob: JobCode;

@@ -1,7 +1,7 @@
 'use client';
 
 import { UI_STYLE } from '@/lib/styles';
-import { RACES, WORLDS, Race, Gender } from '@/lib/constants/identity';
+import { RACES, WORLDS, Race, Gender } from '@/lib/constants/';
 
 interface IdentityStepProps {
 	formData: { name: string; world: string; race: string; gender: string };
