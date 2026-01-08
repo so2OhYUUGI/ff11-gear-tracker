@@ -1,40 +1,39 @@
 'use client';
 
-import { useState } from "react";
-import Dashboard from "@/components/gear/Dashboard";
+import { useRouter } from "next/navigation";
 import { UI_STYLE } from "@/lib/styles";
 
-export default function CharacterManager({ initialCharacters }: { initialCharacters: any[] }) {
-	const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
+interface Character {
+	id: string;
+	name: string;
+	world: string;
+}
 
-	if (selectedCharacterId) {
-		return (
-			<Dashboard
-				characterId={selectedCharacterId}
-				onBack={() => setSelectedCharacterId(null)}
-			/>
-		);
-	}
+export default function CharacterManager({ initialCharacters }: { initialCharacters: Character[] }) {
+	const router = useRouter();
+
+	const handleSelectCharacter = (id: string) => {
+		// 装備管理ページへ遷移（クエリパラメータでキャラを指定）
+		router.push(`/gear?charId=${id}`);
+	};
 
 	return (
-		<div className={UI_STYLE.container}>
-			<header className="mb-10">
-				<h1 className={UI_STYLE.mainTitle}>Character Select</h1>
-				<p className={UI_STYLE.label}>管理するキャラクターを選択してください</p>
+		<div className="space-y-6">
+			<header>
+				<h2 className={UI_STYLE.sectionTitleText}>Characters</h2>
+				<p className={UI_STYLE.label}>管理するキャラクターを選択してトラッカーを開く</p>
 			</header>
 
-			{/* レスポンシブグリッド: スマホ1列、タブレット2列、PC3列 */}
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 				{initialCharacters.map((char) => (
 					<button
 						key={char.id}
-						onClick={() => setSelectedCharacterId(char.id)}
-						className={`${UI_STYLE.card} ${UI_STYLE.cardInactive} text-left hover:${UI_STYLE.cardActive} transition-all group min-h-[140px] flex flex-col justify-between`}
+						onClick={() => handleSelectCharacter(char.id)}
+						className={`${UI_STYLE.card} ${UI_STYLE.cardInactive} text-left hover:${UI_STYLE.cardActive} transition-all group flex flex-col justify-between min-h-[120px]`}
 					>
 						<div>
 							<div className={UI_STYLE.text.label}>{char.world}</div>
-							{/* カード内の名前は cardTitle や foreground を使用して視認性を確保 */}
-							<h2 className="text-xl font-black text-foreground mt-1 group-hover:text-primary transition-colors">
+							<h2 className="text-xl font-black text-slate-900 dark:text-white mt-1 group-hover:text-blue-600 transition-colors">
 								{char.name}
 							</h2>
 						</div>
@@ -44,10 +43,9 @@ export default function CharacterManager({ initialCharacters }: { initialCharact
 					</button>
 				))}
 
-				{/* 新規作成カード */}
 				<a
 					href="/setup"
-					className={`${UI_STYLE.card} border-dashed border-2 border-border flex flex-col items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all min-h-[140px]`}
+					className={`${UI_STYLE.card} border-dashed border-2 border-border flex flex-col items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-all min-h-[120px]`}
 				>
 					<span className="text-3xl font-bold mb-2">+</span>
 					<span className={UI_STYLE.text.label}>New Character</span>

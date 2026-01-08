@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { UI_STYLE } from '@/lib/styles';
 import { JobCode } from '@/lib/constants/jobs';
@@ -9,7 +10,10 @@ import GearSlotList from './GearSlotList';
 
 export default function GearTrackerContainer({ initialCharacters }: { initialCharacters: any[] }) {
 	const supabase = createClient();
-	const [selectedCharId, setSelectedCharId] = useState(initialCharacters[0]?.id || '');
+	const searchParams = useSearchParams();
+	const charIdFromQuery = searchParams.get('charId'); // URLからIDを取得
+	// 初期値としてクエリパラメータのID、なければ最初のキャラを使用
+	const [selectedCharId, setSelectedCharId] = useState(charIdFromQuery || initialCharacters[0]?.id || '');
 	const [currentJob, setCurrentJob] = useState<JobCode>('WAR');
 	const [gears, setGears] = useState<Record<string, any>>({});
 	const [loading, setLoading] = useState(false);

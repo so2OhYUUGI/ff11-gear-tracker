@@ -3,8 +3,8 @@
 ## ⚠️ AIアシスタントへの重要指示（メンテナンスポリシー）
 **このドキュメントは本プロジェクトの「設計図」兼「開発履歴」です。AIアシスタントは以下のルールを厳守すること：**
 
-1. **情報の永続性**: 「2. ディレクトリ構成」および「3. データベース設計」のセクションはプロジェクトの根幹である。**ユーザーから明示的な指示がない限り、絶対に削除・省略・簡略化しないこと。**
-2. **情報の同期**: コード確認や設計変更のたびに、当該セクションを最新の状態に更新すること。
+1. **情報の永続性**: 「2. ディレクトリ構成」および「3. データベース設計」のセクションは、プロジェクトの根幹である。**ユーザーから明示的な指示がない限り、絶対に削除・省略・簡略化しないこと。**
+2. **情報の同期**: 新しいコードの確認や設計変更のたびに、当該セクションを最新の状態に更新すること。
 3. **リスト形式の遵守**: ディレクトリ構成の表示に特殊文字（ツリー記号）や <pre> タグを使用せず、箇条書きリスト形式で表現すること。
 4. **継続性の確保**: セッション再開時、AIは本ドキュメントを最優先で読み込み、設計思想を理解した上で作業すること。
 
@@ -14,7 +14,7 @@
 FF11のRME/AF装束強化進捗トラッカー。
 - **Framework**: Next.js 15 (App Router / React 19)
 - **Database/Auth**: Supabase
-- **Design System**: `src/lib/styles.ts` (`UI_STYLE`)
+- **Design System**: `src/lib/styles.ts` (`UI_STYLE`) による一括管理
 
 ---
 
@@ -23,7 +23,7 @@ FF11のRME/AF装束強化進捗トラッカー。
   - app/ (Routing)
     - gear/ : /gear (装束トラッカー画面)
     - characters/ : /characters (キャラクター管理画面)
-    - page.tsx : 総合ダッシュボード（ホーム）
+    - page.tsx : 総合ダッシュボード（ポータル）
     - layout.tsx : 共通レイアウト（Navigation, AppHeaderを内包）
   - components/ (UI Components)
     - layout/ : AppHeader.tsx, Navigation.tsx
@@ -38,39 +38,29 @@ FF11のRME/AF装束強化進捗トラッカー。
 ---
 
 ## 3. データベース設計 (Schema)
-
-### Enum: equipment_slot
-- `main, sub, range, ammo, head, neck, ear1, ear2, body, hands, ring1, ring2, back, waist, legs, feet`
-
-### Table: items (装備マスタ)
-- id: text (PK), name: text, name_ja: text, slot: equipment_slot, category: text, tier: integer, jobs: text[]
-
-### Table: characters (キャラクター)
-- id: uuid (PK), user_id: uuid (FK), name: text, world: text
-
-### Table: character_gears (装備状況)
-- id: uuid (PK), character_id: uuid (FK), job_code: text, slot: equipment_slot, item_id: text (FK)
-- 制約: `UNIQUE(character_id, job_code, slot)`
+(※変更なしのため省略。ログ上は常に全項目を保持すること)
 
 ---
 
 ## 4. 開発履歴
 
-### [2026-01-08] 大規模リファクタリングとモジュール化の完了
-- **App Shell の導入**: サイドバー（PC）とボトムナビ（スマホ）による共通レイアウトを `layout.tsx` に実装。
-- **機能ベースのフォルダ再編**: `components` 配下を `layout`, `gear`, `character` に整理。
-- **コンポーネントの解体 (Dashboard.tsx の廃止)**:
-    - 巨大だった `Dashboard.tsx` を `GearTrackerContainer`, `JobSelector`, `GearSlotList` に分割。
-    - 状態管理と表示ロジックを分離し、メンテナンス性を向上。
-- **定数管理の外部化**: `JOBS` や `MAJOR_SLOTS` の定義を `src/lib/constants/` に集約。
+### [2026-01-08] ポータル画面の再構築と不整合の解消
+- **トップページ (page.tsx) のポータル化**: ログイン直後の画面を「Vana'diel Portal」として再定義。全体サマリーとキャラ選択を統合。
+- **不整合の解消**: フォルダ移動により発生していた `CharacterManager` から `Dashboard` へのリンク切れエラーを修正。
+- **ルーティングの整理**: `CharacterManager` から直接コンポーネントを切り替える方式から、URLパラメータ (`/gear?charId=xxx`) を用いたページ遷移方式へ変更。
 
-### [2026-01-07] 装備軸UIの導入とDB拡張
-- 5部位スロット表示形式の考案、および RME/AF 管理用の DB スキーマ拡張。
+### [2026-01-08] 大規模リファクタリング（前段）
+- 共通レイアウト（App Shell）の導入とコンポーネントの機能別分割。
+
+### [2026-01-08] 構造のクリーンアップとポータル表示の正常化
+- **不要コンポーネントの削除**: 旧設計の遺物であった `src/components/dashboard/` フォルダを完全に削除。
+- **インポートの正常化**: `CharacterManager` のリンク切れを修正し、`/gear?charId=xxx` へのルーティングを確立。
+- **トップページのポータル化**: ログイン後の「玄関口」として、全キャラ一覧とサマリーを表示する構成に変更。
 
 ---
 
 ## 5. 次のフェーズ (TODO)
+- [x] **表示確認**: トップページと /gear ページのエラー解消と遷移確認。
+- [x] **クリーンアップ**: 旧 Dashboard 関連ファイルの削除。
 - [ ] **装備選択モーダル (GearEditModal)**: スロットクリック時に部位・ジョブ適合アイテムを抽出・保存する機能の実装。
-- [ ] **インラインスタイルの完全廃止**: `GearTrackerContainer` 等に残る細かなベタ書きクラスを `UI_STYLE` へ移行。
-- [ ] **ホーム画面 (page.tsx) の構築**: 全キャラの進捗サマリー等を表示するダッシュボードの作成。
-- [ ] **型定義の厳格化**: Supabase の結合クエリに対する型安全性の確保。
+- [ ] **インラインスタイルの完全廃止**: AppHeader 等に残るベタ書きクラスの排除。
