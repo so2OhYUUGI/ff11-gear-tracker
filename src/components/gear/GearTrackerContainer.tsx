@@ -6,44 +6,32 @@ import { UI_STYLE } from '@/lib/styles';
 import { JobCode } from '@/lib/constants/jobs';
 import JobSelector from './JobSelector';
 import GearSlotList from './GearSlotList';
+import GearEditModal from './GearEditModal';
 
-interface GearTrackerContainerProps {
-	initialCharacters: any[];
-	initialCharId?: string;
-}
+export type GearCategory = 'AF' | 'Relic' | 'Empyrean';
 
-// 冒頭に export default があるか確認
-export default function GearTrackerContainer({ initialCharacters, initialCharId }: GearTrackerContainerProps) {
+export default function GearTrackerContainer({ initialCharacters, initialCharId }: { initialCharacters: any[], initialCharId?: string | null }) {
 	const supabase = createClient();
-
-	// URLからのIDがあればそれを使い、なければ1人目を選択
 	const [selectedCharId, setSelectedCharId] = useState(initialCharId || initialCharacters[0]?.id || '');
 
-	// 選択中のジョブ
 	const char = initialCharacters.find(c => c.id === selectedCharId);
 	const [currentJob, setCurrentJob] = useState<JobCode>((char?.last_job_code as JobCode) || 'WAR');
+	const [activeCategory, setActiveCategory] = useState<GearCategory>('AF');
 
 	const [gears, setGears] = useState<Record<string, any>>({});
 	const [loading, setLoading] = useState(false);
+	const [editingSlot, setEditingSlot] = useState<{ id: string, name: string } | null>(null);
 
 	const fetchGears = async () => {
 		if (!selectedCharId) return;
 		setLoading(true);
-
-		const { data, error } = await supabase
+		const { data } = await supabase
 			.from('character_gears')
-			.select(`
-        slot,
-        items (
-          name_ja,
-          tier,
-          category
-        )
-      `)
+			.select(`slot, items ( id, name_ja, tier, category )`)
 			.eq('character_id', selectedCharId)
 			.eq('job_code', currentJob);
 
-		if (!error && data) {
+		if (data) {
 			const gearMap = (data as any[]).reduce((acc, gear) => {
 				acc[gear.slot] = gear;
 				return acc;
@@ -55,55 +43,101 @@ export default function GearTrackerContainer({ initialCharacters, initialCharId 
 		setLoading(false);
 	};
 
-	useEffect(() => {
-		fetchGears();
-	}, [selectedCharId, currentJob]);
+	useEffect(() => { fetchGears(); }, [selectedCharId, currentJob]);
 
 	const handleJobChange = async (job: JobCode) => {
 		setCurrentJob(job);
 		await supabase.from('characters').update({ last_job_code: job }).eq('id', selectedCharId);
 	};
 
-	const currentChar = initialCharacters.find(c => c.id === selectedCharId);
-
 	return (
-		<div className={UI_STYLE.container}>
-			<div className={UI_STYLE.header.user + " flex-wrap gap-4"}>
-				<div className="flex items-center gap-2">
-					<label className={UI_STYLE.label}>Character</label>
-					<select
-						value={selectedCharId}
-						onChange={(e) => setSelectedCharId(e.target.value)}
-						className={UI_STYLE.input}
-					>
-						{initialCharacters.map(char => (
-							<option key={char.id} value={char.id}>{char.name}</option>
-						))}
-					</select>
+		<div className={`${UI_STYLE.container} ${UI_STYLE.pageWrapper}`}>
+
+			{/* 1. 固定ヘッダーセクション（キャラクターカード + 操作バー） */}
+			{/* top-14 を指定することで AppHeader の直下に固定されます */}
+			<div className={`${UI_STYLE.header.stickyWrapper} top-14`}>
+				{char && (
+					<div className={UI_STYLE.header.session}>
+						<div className="flex-1 z-10 min-w-0">
+							<p className={UI_STYLE.text.tiny + " opacity-60 text-white mb-1 tracking-widest uppercase"}>
+								{char.world}
+							</p>
+							<h1 className="text-2xl sm:text-3xl font-black italic text-white leading-none truncate drop-shadow-md">
+								{char.name}
+							</h1>
+						</div>
+						{/* 装飾用の巨大文字 */}
+						<div className={UI_STYLE.header.decorationText}>
+							{currentJob}
+						</div>
+					</div>
+				)}
+
+				{/* 操作バー: キャラクターとジョブの切り替え */}
+				<div className={`${UI_STYLE.header.user} mb-0 flex-wrap gap-4 py-3`}>
+					<div className="flex items-center gap-2">
+						<label className={UI_STYLE.label}>Character</label>
+						<select
+							value={selectedCharId}
+							onChange={(e) => setSelectedCharId(e.target.value)}
+							className={UI_STYLE.input}
+						>
+							{initialCharacters.map(c => (
+								<option key={c.id} value={c.id}>{c.name}</option>
+							))}
+						</select>
+					</div>
+					<JobSelector currentJob={currentJob} onJobChange={handleJobChange} />
 				</div>
-				<JobSelector currentJob={currentJob} onJobChange={handleJobChange} />
 			</div>
 
-			{currentChar && (
-				<div className={UI_STYLE.header.session + " mt-4 shadow-lg border-none"}>
-					<div className="flex-1">
-						<p className="text-[10px] font-black uppercase opacity-60 tracking-widest text-white">
-							{currentChar.world}
-						</p>
-						<h1 className="text-2xl font-black italic text-white drop-shadow-md">
-							{currentChar.name}
-						</h1>
-					</div>
-					<div className="text-5xl font-black italic opacity-20 ml-4 select-none text-white">
-						{currentJob}
-					</div>
+			{/* 2. メインコンテンツ（カテゴリータブ + 装備リスト） */}
+			<div className="mt-4">
+				{/* カテゴリー切り替えタブ */}
+				<div className={UI_STYLE.tab.container}>
+					{(['AF', 'Relic', 'Empyrean'] as GearCategory[]).map(cat => (
+						<button
+							key={cat}
+							onClick={() => setActiveCategory(cat)}
+							className={`${UI_STYLE.tab.item} ${activeCategory === cat ? UI_STYLE.tab.active : UI_STYLE.tab.inactive
+								}`}
+						>
+							{cat === 'Empyrean' ? 'EMPY' : cat}
+						</button>
+					))}
 				</div>
-			)}
 
-			<div className="mt-8">
-				{/* ここで GearSlotList を呼び出し */}
-				<GearSlotList gears={gears} loading={loading} />
+				{/* 装備進捗リスト本体 */}
+				<div className={UI_STYLE.gearListWrapper}>
+					<div className="flex justify-between items-center mb-4 px-1">
+						<h2 className={UI_STYLE.sectionTitleText}>
+							{activeCategory} PROGRESS
+						</h2>
+						{loading && (
+							<span className={UI_STYLE.text.tiny + " text-blue-500 animate-pulse font-bold"}>
+								SYNCING...
+							</span>
+						)}
+					</div>
+
+					<GearSlotList
+						gears={gears}
+						loading={loading}
+						onSlotClick={setEditingSlot}
+					/>
+				</div>
 			</div>
+
+			{/* 3. 進捗更新モーダル */}
+			<GearEditModal
+				isOpen={!!editingSlot}
+				onClose={() => setEditingSlot(null)}
+				characterId={selectedCharId}
+				jobCode={currentJob}
+				category={activeCategory}
+				slot={editingSlot}
+				onSelect={fetchGears}
+			/>
 		</div>
 	);
 }

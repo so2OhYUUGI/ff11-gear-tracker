@@ -9,37 +9,43 @@ interface GearEditModalProps {
 	onClose: () => void;
 	characterId: string;
 	jobCode: string;
-	slot: { id: string, name: string };
-	onSelect: () => void; // 更新後に親を再読み込みさせるため
+	category: string; // AF, Relic, Empyrean
+	slot: { id: string, name: string } | null;
+	onSelect: () => void;
 }
 
-export default function GearEditModal({ isOpen, onClose, characterId, jobCode, slot, onSelect }: GearEditModalProps) {
+export default function GearEditModal({
+	isOpen, onClose, characterId, jobCode, category, slot, onSelect
+}: GearEditModalProps) {
 	const supabase = createClient();
 	const [items, setItems] = useState<any[]>([]);
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
-		async function fetchAvailableItems() {
-			if (!isOpen) return;
+		async function fetchTiers() {
+			if (!isOpen || !slot) return;
 			setLoading(true);
 
-			// 当該ジョブかつ当該スロットに合うアイテムを取得
-			// AF/Relic/Empy などを優先的に出す
-			const { data } = await supabase
+			// 同じジョブ、同じ部位、同じカテゴリー（AF/Relic等）の全ティアを取得
+			const { data, error } = await supabase
 				.from('items')
 				.select('*')
 				.eq('slot', slot.id)
+				.eq('category', category)
 				.contains('jobs', [jobCode])
-				.order('tier', { ascending: false });
+				.order('tier', { ascending: true });
 
+			if (error) {
+				console.error("Fetch Tiers Error:", error);
+			}
 			setItems(data || []);
 			setLoading(false);
 		}
-		fetchAvailableItems();
-	}, [isOpen, slot.id, jobCode, supabase]);
+		fetchTiers();
+	}, [isOpen, slot, jobCode, category, supabase]);
 
 	const handleSelectItem = async (itemId: string | null) => {
-		// character_gears テーブルを更新 (Upsert)
+		if (!slot) return;
 		const { error } = await supabase
 			.from('character_gears')
 			.upsert({
@@ -55,48 +61,54 @@ export default function GearEditModal({ isOpen, onClose, characterId, jobCode, s
 		if (!error) {
 			onSelect();
 			onClose();
-		} else {
-			console.error('Save error:', error);
 		}
 	};
 
-	if (!isOpen) return null;
+	if (!isOpen || !slot) return null;
 
 	return (
 		<div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-			<div className={`${UI_STYLE.card} w-full max-w-md max-h-[80vh] flex flex-col`}>
-				<div className="flex justify-between items-center mb-4">
-					<h3 className={UI_STYLE.cardTitle + " text-lg"}>
-						{slot.name}装備を選択 ({jobCode})
-					</h3>
-					<button onClick={onClose} className="text-slate-400 hover:text-slate-600">✕</button>
+			<div className={`${UI_STYLE.card} w-full max-w-md max-h-[80vh] flex flex-col shadow-2xl`}>
+				<div className="flex justify-between items-center mb-6">
+					<div>
+						<h3 className={UI_STYLE.cardTitle + " text-lg text-blue-600"}>{category} {slot.name} 進捗更新</h3>
+						<p className={UI_STYLE.text.tiny + " text-slate-500"}>Job: {jobCode}</p>
+					</div>
+					<button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl">✕</button>
 				</div>
 
-				<div className="flex-1 overflow-y-auto space-y-2 pr-2">
-					{/* 装備を外す選択肢 */}
+				<div className="flex-1 overflow-y-auto space-y-3 pr-2">
 					<button
 						onClick={() => handleSelectItem(null)}
-						className="w-full p-3 text-left border border-dashed border-slate-300 rounded-lg hover:bg-slate-50 text-slate-500 text-sm"
+						className="w-full p-4 text-center border-2 border-dashed border-slate-200 rounded-xl hover:bg-red-50 hover:text-red-600 transition-all text-[10px] font-black text-slate-400 uppercase tracking-widest"
 					>
-						❌ 装備を外す
+						❌ 未取得 / 装備なし
 					</button>
 
 					{loading ? (
-						<div className="p-10 text-center animate-pulse text-slate-400">Loading items...</div>
-					) : (
+						<div className="py-10 text-center animate-pulse text-slate-400">Loading Tiers...</div>
+					) : items.length > 0 ? (
 						items.map(item => (
 							<button
 								key={item.id}
 								onClick={() => handleSelectItem(item.id)}
-								className="w-full p-3 text-left border border-slate-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all flex justify-between items-center group"
+								className="w-full p-4 text-left border border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all group"
 							>
-								<div>
-									<div className="font-bold text-slate-800">{item.name_ja}</div>
-									<div className={UI_STYLE.badge.secondary + " mt-1"}>{item.category}</div>
+								<div className="flex justify-between items-center">
+									<div>
+										<div className="font-bold text-slate-800">{item.name_ja}</div>
+										<div className="flex gap-2 mt-1">
+											<span className={UI_STYLE.badge.secondary}>Tier: {item.tier === 0 ? 'NQ' : `+${item.tier}`}</span>
+										</div>
+									</div>
+									<div className="text-blue-500 opacity-0 group-hover:opacity-100 transition-all font-black">SET ➔</div>
 								</div>
-								<div className="opacity-0 group-hover:opacity-100 text-blue-500">選択</div>
 							</button>
 						))
+					) : (
+						<div className="py-10 text-center text-slate-400 text-xs italic">
+							データが登録されていません。<br />(category: {category}, slot: {slot.id})
+						</div>
 					)}
 				</div>
 			</div>

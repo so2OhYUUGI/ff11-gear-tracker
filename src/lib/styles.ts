@@ -1,5 +1,27 @@
 export const UI_STYLE = {
-	container: "flex flex-col gap-6 w-full max-w-md mx-auto pb-20 px-1 animate-in fade-in duration-500",
+	// コンテナのパディングを調整（上下の余白を管理しやすくする）
+	container: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8", // 上下のパディング(p-4)を削除
+
+	// ページ全体の基本余白（ページごとにトップの余白を当てる）
+	pageWrapper: "pt-4 pb-10",
+
+	header: {
+		// ...既存...
+		// 固定位置を調整。ヘッダーの高さ(約64px/16)を考慮
+		stickyWrapper: "sticky top-0 z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8",
+		// 巨大装飾文字
+		decorationText: "absolute right-4 bottom-0 text-7xl font-black italic opacity-10 select-none text-white tracking-tighter pointer-events-none",
+		session: "flex items-center justify-between bg-blue-600 text-white p-4 rounded-xl shadow-lg mb-2 relative overflow-hidden",
+		user: "flex items-center justify-between bg-muted/40 p-3 rounded-lg border border-border/60 mb-2",
+		backButton: "h-9 w-9 bg-primary-foreground/10 hover:bg-primary-foreground/20 text-primary-foreground rounded-full shrink-0 border-none flex items-center justify-center",
+	},
+
+	// 共通の「アプリヘッダー」用スタイルを新設
+	appHeader: {
+		wrapper: "sticky top-0 z-40 w-full bg-background border-b border-border/60",
+		inner: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between",
+	},
+  
 
 	// セクション（進捗や在庫のまとまり）
 	section: "space-y-4", // ← これが漏れていました
@@ -22,13 +44,6 @@ export const UI_STYLE = {
 	// カード
 	cardActive: "border-primary ring-1 ring-primary/20 shadow-md",
 	cardInactive: "border-border opacity-90",
-
-	// ヘッダー関連
-	header: {
-		session: "flex items-center justify-between bg-primary text-primary-foreground p-3 rounded-xl shadow-lg mb-2",
-		user: "flex items-center justify-between bg-muted/40 p-3 rounded-lg border border-border/60 mb-2",
-		backButton: "h-9 w-9 bg-primary-foreground/10 hover:bg-primary-foreground/20 text-primary-foreground rounded-full shrink-0 border-none flex items-center justify-center",
-	},
 
 	// プログレスバー
 	progress: {
@@ -86,5 +101,16 @@ export const UI_STYLE = {
 		world: "text-[9px] font-bold uppercase text-slate-400 tracking-wider mb-1",
 		selectText: "text-[10px] font-black text-blue-500 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0"
 	},
+
+	// タブ関連
+	tab: {
+		container: "flex gap-1 px-1",
+		item: "flex-1 py-2.5 rounded-t-xl font-black text-[10px] tracking-widest uppercase transition-all border-t border-x",
+		active: "bg-blue-600 text-white border-blue-700 shadow-[0_-4px_10px_rgba(37,99,235,0.2)]",
+		inactive: "bg-slate-100 dark:bg-slate-800 text-slate-400 border-transparent hover:bg-slate-200",
+	},
+
+	// 装備リストのコンテナ（タブとの一体化用）
+	gearListWrapper: "bg-white dark:bg-slate-900 border-x border-b border-slate-200 dark:border-slate-800 rounded-b-2xl p-4 shadow-sm",
 
 };

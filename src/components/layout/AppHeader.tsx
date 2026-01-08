@@ -11,10 +11,11 @@ export default function AppHeader({ email }: { email?: string }) {
 	};
 
 	return (
-		<header className={UI_STYLE.container + " pb-0"}>
-			<div className={UI_STYLE.header.user + " flex justify-between items-center"}>
+		// layout.tsx での重なりを制御するため sticky を適用
+		<header className={UI_STYLE.appHeader.wrapper}>
+			<div className={UI_STYLE.appHeader.inner}>
 				<div className="flex items-center gap-2">
-					<span className="text-lg font-black italic tracking-tighter text-blue-600">FF11 Gear Tracker</span>
+					<span className="text-lg font-black italic tracking-tighter text-blue-600">FF11 Tracker</span>
 					{email && <span className="text-[10px] font-bold text-slate-400 hidden sm:inline">| {email}</span>}
 				</div>
 				<button
