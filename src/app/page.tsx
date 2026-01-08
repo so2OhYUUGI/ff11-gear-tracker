@@ -10,13 +10,17 @@ export default async function Home() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return redirect("/login");
 
-  const { data: characters } = await supabase
-    .from("characters")
-    .select(`id, name, world, last_job_code, game_accounts ( id, name, color_code )`)
-    .order("created_at", { ascending: true });
+  // アカウントとキャラクターの両方を取得
+  const [accountsRes, charsRes] = await Promise.all([
+    supabase.from("game_accounts").select("*").order("created_at", { ascending: true }),
+    supabase.from("characters").select(`id, name, world, last_job_code, game_accounts ( id, name, color_code )`).order("created_at", { ascending: true })
+  ]);
 
-  // ロジックを関数一つで完結
-  const groupedCharacters = groupCharactersByAccount(characters || []);
+  const accounts = accountsRes.data || [];
+  const characters = charsRes.data || [];
+
+  // アカウントリストを渡して、色を固定させる
+  const groupedCharacters = groupCharactersByAccount(characters, accounts);
 
   return (
     <div className={`${UI_STYLE.container} ${UI_STYLE.pageWrapper}`}>

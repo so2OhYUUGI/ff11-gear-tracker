@@ -29,6 +29,7 @@ const SYSTEM_COLORS = [
  * これにより、21番目までは絶対に色が被りません。
  */
 export function getColorByIndex(index: number): string {
+	if (index === 999) return '#94a3b8'; // 未紐付け用の slate-400
 	return SYSTEM_COLORS[index % SYSTEM_COLORS.length];
 }
 
