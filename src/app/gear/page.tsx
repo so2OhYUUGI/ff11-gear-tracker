@@ -16,8 +16,18 @@ export default async function GearPage(props: {
 
 	const { data: characters } = await supabase
 		.from("characters")
-		.select("id, name, world, last_job_code");
-
+		.select(`
+      id, 
+      name, 
+      world, 
+      last_job_code,
+      game_accounts (
+        id,
+        name,
+        color_code
+      )
+    `);
+	
 	if (!characters || characters.length === 0) {
 		return redirect("/setup");
 	}

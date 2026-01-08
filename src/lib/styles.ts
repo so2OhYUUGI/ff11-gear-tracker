@@ -1,6 +1,6 @@
 export const UI_STYLE = {
 	container: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8",
-	pageWrapper: "pt-0 pb-24 md:pb-10",
+	pageWrapper: "pt-0 pb-24 md:pb-10", // 上部のパディングを完全に排除
 
 	// アプリ全体の枠組み
 	shell: {
@@ -17,14 +17,15 @@ export const UI_STYLE = {
 			logout: "text-[10px] font-black text-slate-500 hover:text-red-500 transition-colors py-1 px-3 border border-slate-200 dark:border-slate-700 rounded-full bg-white dark:bg-slate-800"
 		},
 		// stickyWrapper の py-2 を py-0 にし、密着度を高める。z-indexを30に固定
-		stickyWrapper: "sticky top-[56px] z-30 bg-background/95 backdrop-blur -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 border-b border-border/40 pb-4",
-		session: "flex items-center justify-between bg-blue-600 text-white p-4 rounded-xl shadow-lg relative overflow-hidden mt-4",
+		stickyWrapper: "sticky top-0 z-30 bg-background/95 backdrop-blur -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 pb-2 pt-2",
+
+		// mt-4 を削除。位置は stickyWrapper のパディングで制御する
 		user: "flex items-center justify-between bg-muted/40 p-2 rounded-lg border border-border/60 mt-2",
 		decorationText: "absolute right-4 bottom-0 text-7xl font-black italic opacity-10 select-none text-white tracking-tighter pointer-events-none",
+		session: "flex items-center justify-between text-white p-4 rounded-xl shadow-lg relative overflow-hidden",
+		backButton: "h-9 w-9 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center font-bold shadow-sm transition-all active:scale-95 shrink-0 z-30",
 	},
-
-	// 装備リスト側の余白調整
-	gearListSection: "mt-4 relative z-10",
+	gearListSection: "relative z-10",
 
 	// モーダル
 	modal: {
