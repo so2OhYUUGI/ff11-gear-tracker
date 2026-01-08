@@ -3,10 +3,9 @@
 ## ⚠️ AIアシスタントへの重要指示（メンテナンスポリシー）
 **このドキュメントは本プロジェクトの「設計図」兼「開発履歴」です。AIアシスタントは以下のルールを厳守すること：**
 
-1. **情報の永続性**: 「2. ディレクトリ構成」および「3. データベース設計」のセクションは、プロジェクトの根幹である。**ユーザーから明示的な指示がない限り、絶対に削除・省略・簡略化しないこと。**
-2. **情報の同期**: 新しいコードの確認や設計変更のたびに、当該セクションを最新の状態に更新すること。
-3. **リスト形式の遵守**: ディレクトリ構成の表示にエスケープ文字（ツリー記号）や <pre> タグを使用せず、箇条書きリスト形式で表現すること。
-4. **継続性の確保**: セッション再開時、AIは本ドキュメントを最優先で読み込み、設計思想を理解した上で作業すること。
+1. **情報の永続性**: 「2. ディレクトリ構成」および「3. データベース設計」のセクションはプロジェクトの根幹である。**ユーザーから明示的な指示がない限り、絶対に削除・省略・簡略化しないこと。**
+2. **情報の同期**: コード確認や設計変更のたびに、当該セクションを最新の状態に更新すること。
+3. **リスト形式の遵守**: ディレクトリ構成の表示に特殊文字（ツリー記号）や <pre> タグを使用せず、箇条書きリスト形式で表現すること。
 
 ---
 
@@ -14,24 +13,28 @@
 FF11のRME/AF装束強化進捗トラッカー。
 - **Framework**: Next.js 15 (App Router / React 19)
 - **Database/Auth**: Supabase
-- **Design System**: `src/lib/styles.ts` (`UI_STYLE`) による一括管理
+- **Design System**: `src/lib/styles.ts` (`UI_STYLE`)
 
 ---
 
-## 2. ディレクトリ構成
+## 2. ディレクトリ構成（2026-01-08 再構築）
 - src/
-  - app/ (Server Components / Next.js 15)
-    - page.tsx : 認証チェック・初期データフェッチ担当
-    - (auth)/ : 認証・ログインフロー関連
-  - components/ (Client Components)
-    - AppHeader.tsx : 共通ヘッダー（ログアウト・ユーザー情報）
-    - CharacterManager.tsx : 画面遷移司令塔（キャラ一覧 ↔ Dashboard）
-    - Dashboard.tsx : 装備管理メイン画面（部位スロット軸）
-  - lib/ (共通ユーティリティ・定義)
-    - styles.ts : デザイン定義 (UI_STYLE) - インラインスタイル禁止
-    - constants.ts : ジョブ・スロット・アイテム定義（予定）
+  - app/ (Routing)
+    - gear/ : /gear (装束トラッカー画面：ジョブ選択 -> 装備選択)
+    - characters/ : /characters (キャラクター管理画面)
+    - target/ : /target (目標・素材計算画面：予定)
+    - page.tsx : 総合ダッシュボード（ホーム）
+    - layout.tsx : アプリ共通レイアウト（Navigation, AppHeaderを内包）
+  - components/ (UI Components)
+    - layout/ : AppHeader.tsx, Navigation.tsx
+    - gear/ : JobSelector.tsx, GearSlotList.tsx, GearEditModal.tsx
+    - character/ : CharacterManager.tsx, CharacterCard.tsx
+    - ui/ : ボタンやバッジ等の共通パーツ（予定）
+  - lib/ (共通定義・ロジック)
+    - styles.ts : UI_STYLE (デザインシステム)
+    - constants/ : jobs.ts, slots.ts (定数管理)
   - utils/
-    - supabase/ : Supabase SDK設定（Server/Client）
+    - supabase/ : server.ts, client.ts
 
 ---
 
@@ -42,12 +45,12 @@ FF11のRME/AF装束強化進捗トラッカー。
 
 ### Table: items (装備マスタ)
 - id: text (PK) - アイテム識別子
-- name: text (NOT NULL) - 内部用/英語名称
+- name: text (NOT NULL) - 英語名称
 - name_ja: text - 日本語表示名
-- slot: equipment_slot - 部位固定
+- slot: equipment_slot - 部位
 - category: text - カテゴリ（AF, Relic, Empy, etc.）
-- tier: integer - 強化段階 (0:NQ, 1:+1, 2:+2, 3:+3)
-- jobs: text[] - 装備可能ジョブの配列
+- tier: integer - 強化段階 (0～3)
+- jobs: text[] - 装備可能ジョブ
 
 ### Table: characters (キャラクター)
 - id: uuid (PK)
@@ -57,28 +60,31 @@ FF11のRME/AF装束強化進捗トラッカー。
 
 ### Table: character_gears (装備状況)
 - id: uuid (PK)
-- character_id: uuid (FK -> characters.id)
-- job_code: text (WAR, MNK, etc.)
+- character_id: uuid (FK)
+- job_code: text
 - slot: equipment_slot
-- item_id: text (FK -> items.id)
-- 制約: `UNIQUE(character_id, job_code, slot)` - 1キャラ1ジョブ1部位に1装備を保証
+- item_id: text (FK)
+- 制約: `UNIQUE(character_id, job_code, slot)`
 
 ---
 
 ## 4. 開発履歴
 
-### [2026-01-07] アーキテクチャの刷新と装備軸UIの導入
-- **Server/Clientの完全分離**: page.tsx でのデータフェッチと CharacterManager でのステート管理を明確化。
-- **UI/UXリニューアル**: 部位スロット軸（頭胴手脚足）のUIへ移行。AppHeader による操作系の集約。
-- **デザインシステムの強化**: UI_STYLE の定義拡張（buttonSecondary, input, header等）と、白飛び（コントラスト不足）問題の修正。
+### [2026-01-08] フォルダ構成の再構築とアプリレイアウトの導入
+- **共通レイアウトの実装**: サイドバー（PC）とボトムナビ（スマホ）による「App Shell」を構築。
+- **ディレクトリ構成の整理**: 機能ベース（Gear, Character, Layout）のフォルダ構成に再編。
+- **ページ責務の明確化**: 
+    - `/` (Home): 総合ダッシュボード
+    - `/gear` : 装束トラッカー（ジョブ選択 ➔ 装束選択フローの起点）
+    - `/characters` : キャラクター管理
 
-### [2025以前] 初期基盤
-- SupabaseによるAuth・DB基盤構築、複数ゲームアカウント対応。
+### [2026-01-07] 装備軸UIの導入
+- 主要5部位（頭胴手脚足）をリスト形式で表示する Dashboard 試作版の実装。
 
 ---
 
 ## 5. 次のフェーズ (TODO)
-- [ ] **装備変更モーダル**: スロットクリック時に部位・ジョブ適合アイテムを抽出・保存する機能。
-- [ ] **定数ファイルの独立**: Dashboard.tsx 内の JOBS 配列等を lib/constants.ts へ移動。
-- [ ] **インラインスタイルの完全廃止**: Dashboard.tsx 等に残るベタ書きクラスを UI_STYLE へ完全移行。
-- [ ] **データインポート**: RME/AF系アイテムマスタのバッチ登録。
+- [ ] **リンク切れの解消**: フォルダ移動に伴うインポートパスの修正。
+- [ ] **JobSelector の独立**: Dashboard からジョブ選択機能を切り出し、`/gear` ページで管理。
+- [ ] **装束選択フローの構築**: ジョブ選択 ➔ 部位選択 ➔ 装備選択モーダルの連動。
+- [ ] **インラインスタイルの完全廃止**: 共通レイアウト部分の UI_STYLE 移行。

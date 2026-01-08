@@ -16,11 +16,8 @@ export default async function Home() {
   ]);
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      {/* 共通ヘッダー */}
-      <AppHeader email={user.email} />
-
-      {/* 司令塔コンポーネント */}
+    <main className="w-full">
+      {/* <AppHeader email={user.email} />  ← これを削除 */}
       <CharacterManager initialCharacters={characters || []} />
     </main>
   );

@@ -54,5 +54,22 @@ export const UI_STYLE = {
 		success: "px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 rounded text-[10px] font-bold uppercase border border-emerald-200 dark:border-emerald-800",
 		warning: "px-2 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 rounded text-[10px] font-bold uppercase border border-amber-200 dark:border-amber-800",
 		secondary: "px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded text-[10px] font-bold uppercase border border-slate-200 dark:border-slate-600",
-	}
+	},
+
+	shell: {
+		// 既存の背景色と干渉しないよう bg-background を活用
+		wrapper: "flex h-screen w-full overflow-hidden bg-background",
+		main: "flex flex-col flex-1 min-w-0 h-full relative",
+		content: "flex-1 overflow-y-auto p-4 pb-24 md:pb-6", // スマホ時のボトムナビ分の余白
+	},
+
+	nav: {
+		sidebar: "hidden md:flex w-64 flex-col bg-slate-900 text-slate-300 border-r border-slate-800 shrink-0",
+		bottom: "md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex justify-around items-center h-16 px-2 z-[100]",
+		item: "flex flex-col md:flex-row items-center gap-1 md:gap-3 px-3 py-2 md:px-4 md:py-3 rounded-lg transition-colors min-w-[64px]",
+		itemActive: "bg-blue-600 text-white",
+		itemInactive: "text-slate-500 md:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800",
+		label: "text-[10px] md:text-sm font-bold uppercase tracking-tighter md:tracking-normal",
+	},
+
 };
