@@ -59,6 +59,8 @@ export const UI_STYLE = {
 		name: "text-lg font-black text-slate-900 dark:text-white leading-tight group-hover:text-blue-600 transition-colors line-clamp-2 break-all",
 		jobBadge: "absolute top-2 right-2 bg-slate-100/90 dark:bg-slate-800/90 backdrop-blur-sm px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-[10px] font-black italic text-slate-500 shadow-sm z-20",
 		accountBadge: "inline-flex items-center px-2 py-0.5 rounded text-[8px] font-black text-white uppercase tracking-widest mt-2",
+		world: "",
+		selectText: "",
 	},
 
 	// 共通の「アプリヘッダー」用スタイルを新設
