@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import Dashboard from "@/components/Dashboard";
+import Dashboard from "@/components/gear/Dashboard";
 import { UI_STYLE } from "@/lib/styles";
 
 export default function CharacterManager({ initialCharacters }: { initialCharacters: any[] }) {

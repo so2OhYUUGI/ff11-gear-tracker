@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import CharacterManager from "@/components/CharacterManager";
-import AppHeader from "@/components/AppHeader";
+import CharacterManager from "@/components/character/CharacterManager";
+import AppHeader from "@/components/layout/AppHeader";
 
 export default async function Home() {
   const supabase = await createClient();
