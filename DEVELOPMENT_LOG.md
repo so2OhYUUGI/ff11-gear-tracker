@@ -41,11 +41,19 @@ FF11 装束強化進捗トラッカー。
 ---
 
 ## 3. データベース設計 (Schema)
-### Enum: equipment_slot
-- main, sub, range, ammo, head, neck, ear1, ear2, body, hands, ring1, ring2, back, waist, legs, feet
-
-### Table: items, characters, character_gears, game_accounts
-(※各テーブルのカラム定義は本日のSQL実行により最新化済み。color_code, last_job_code 等を実装)
+| table_name          | columns                                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------------- |
+| character_gears     | id, character_id, job_code, slot, item_id, status, updated_at                                                 |
+| characters          | id, user_id, name, world, account_label, race, gender, created_at, updated_at, game_account_id, last_job_code |
+| game_accounts       | id, user_id, name, created_at, color_code                                                                     |
+| gear_progression    | id, character_id, group_name, job_code, slot, current_item_id, updated_at                                     |
+| inventories         | id, character_id, item_id, quantity, location, updated_at                                                     |
+| items               | id, name, category, created_at, name_ja, slot, tier, jobs, base_stats                                         |
+| profiles            | id, username, avatar_url                                                                                      |
+| recipe_groups       | id, name, category, description                                                                               |
+| recipe_requirements | id, group_id, item_id, quantity, step_name                                                                    |
+| recipes             | id, result_item_id, recipe_type, base_item_id, material_item_id, quantity, acquisition_note                   |
+| user_targets        | id, user_id, character_id, group_id, status, created_at, priority, user_note                                  |
 
 ---
 
