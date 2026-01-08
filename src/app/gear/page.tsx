@@ -31,13 +31,22 @@ export default async function GearPage(props: {
 	if (!characters || characters.length === 0) {
 		return redirect("/setup");
 	}
+	const [accountsRes, charsRes] = await Promise.all([
+		supabase.from("game_accounts").select("*").order("created_at", { ascending: true }),
+		supabase.from("characters").select(`
+      id, name, world, last_job_code,
+      game_accounts ( id, name, color_code )
+    `)
+	]);
 
 	return (
 		<Suspense fallback={<div className="p-10 text-center">Loading Tracker...</div>}>
 			<GearTrackerContainer
-				initialCharacters={characters}
+				initialCharacters={charsRes.data || []}
+				allAccounts={accountsRes.data || []} // これを追加
 				initialCharId={charId}
 			/>
 		</Suspense>
+	);
 	);
 }

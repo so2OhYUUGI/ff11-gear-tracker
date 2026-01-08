@@ -3,18 +3,26 @@
 import Link from 'next/link';
 import { UI_STYLE } from '@/lib/styles';
 import { GearCategory, Character } from '@/lib/types';
-import { GEAR_CATEGORIES } from '@/lib/constants/gear'; // 追加
+import { GEAR_CATEGORIES } from '@/lib/constants'; // 追加
 import { useGearTracker } from './hooks/useGearTracker';
 import JobSelector from './JobSelector';
 import GearSlotList from './GearSlotList';
 import GearEditModal from './GearEditModal';
 
-export default function GearTrackerContainer({ initialCharacters, initialCharId }: { initialCharacters: Character[], initialCharId?: string | null }) {
+export default function GearTrackerContainer({
+	initialCharacters,
+	allAccounts, // 追加
+	initialCharId
+}: {
+	initialCharacters: Character[],
+	allAccounts: GameAccount[], // 追加
+	initialCharId?: string | null
+}) {
 	const {
 		char, accountColor, currentJob, activeCategory, setActiveCategory,
 		gears, loading, editingSlot, setEditingSlot,
 		handleJobChange, refreshGears, selectedCharId
-	} = useGearTracker(initialCharacters, initialCharId);
+	} = useGearTracker(initialCharacters, allAccounts, initialCharId); // 引数追加
 
 	if (!char) return null;
 
