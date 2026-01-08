@@ -21,19 +21,22 @@ FF11のRME/AF装束強化進捗トラッカー。
 ## 2. ディレクトリ構成 (2026-01-08 最新)
 - src/
   - app/ (Routing)
-    - gear/ : /gear (装束トラッカー画面)
-    - characters/ : /characters (キャラクター管理画面)
-    - page.tsx : 総合ダッシュボード（ポータル）
-    - layout.tsx : 共通レイアウト（Navigation, AppHeaderを内包）
+    - gear/ : 装束トラッカー画面
+    - characters/ : キャラクター管理
+    - page.tsx : 総合ポータル
+    - layout.tsx : アプリ共通レイアウト（AppShell）
   - components/ (UI Components)
-    - layout/ : AppHeader.tsx, Navigation.tsx
-    - gear/ : GearTrackerContainer.tsx, JobSelector.tsx, GearSlotList.tsx
-    - character/ : CharacterManager.tsx
-  - lib/ (共通定義・ロジック)
-    - styles.ts : デザイン定義システム (UI_STYLE)
-    - constants/ : jobs.ts, slots.ts (定数管理)
+    - layout/ : AppHeader, Navigation
+    - gear/ : GearTrackerContainer, JobSelector, GearSlotList, GearEditModal
+    - character/ : CharacterManager
+  - lib/ (Shared Core)
+    - styles.ts : デザインシステム (UI_STYLE)
+    - types.ts : アプリ共通型定義 (Character, GearItem, etc.)
+    - utils.ts : ビジネスロジック (グループ化, データ整形)
+    - constants/ : jobs.ts, slots.ts
+    - colors.ts : アカウントカラー生成ロジック
   - utils/
-    - supabase/ : server.ts, client.ts
+    - supabase/ : server/client SDK設定
 
 ---
 

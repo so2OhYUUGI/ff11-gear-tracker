@@ -4,37 +4,49 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { UI_STYLE } from '@/lib/styles';
 import { JobCode } from '@/lib/constants/jobs';
-import { GearCategory } from '@/lib/types'; // libからインポート
-import { formatGearMap } from '@/lib/utils'; // libからインポート
+import { Character, CharacterGear, GearCategory } from '@/lib/types'; // 型をインポート
+import { formatGearMap } from '@/lib/utils';
 import JobSelector from './JobSelector';
 import GearSlotList from './GearSlotList';
 import GearEditModal from './GearEditModal';
 
-export default function GearTrackerContainer({ initialCharacters, initialCharId }: { initialCharacters: any[], initialCharId?: string | null }) {
+interface GearTrackerContainerProps {
+	initialCharacters: Character[]; // any を排除
+	initialCharId?: string | null;
+}
+
+export default function GearTrackerContainer({ initialCharacters, initialCharId }: GearTrackerContainerProps) {
 	const supabase = createClient();
 	const [selectedCharId, setSelectedCharId] = useState(initialCharId || initialCharacters[0]?.id || '');
+
 	const char = initialCharacters.find(c => c.id === selectedCharId);
 	const [currentJob, setCurrentJob] = useState<JobCode>((char?.last_job_code as JobCode) || 'WAR');
 	const [activeCategory, setActiveCategory] = useState<GearCategory>('AF');
-	const [gears, setGears] = useState<Record<string, any>>({});
+
+	// 型を Record<string, CharacterGear> に固定
+	const [gears, setGears] = useState<Record<string, CharacterGear>>({});
 	const [loading, setLoading] = useState(false);
 	const [editingSlot, setEditingSlot] = useState<{ id: string, name: string } | null>(null);
 
 	const fetchGears = async () => {
 		if (!selectedCharId) return;
 		setLoading(true);
-		const { data } = await supabase
+		const { data, error } = await supabase
 			.from('character_gears')
 			.select(`slot, items ( id, name_ja, tier, category )`)
 			.eq('character_id', selectedCharId)
 			.eq('job_code', currentJob);
 
-		setGears(data ? formatGearMap(data as any) : {});
+		if (!error && data) {
+			setGears(formatGearMap(data as unknown as CharacterGear[]));
+		} else {
+			setGears({});
+		}
 		setLoading(false);
 	};
 
 	useEffect(() => { fetchGears(); }, [selectedCharId, currentJob]);
-
+	
 	const handleJobChange = async (job: JobCode) => {
 		setCurrentJob(job);
 		await supabase.from('characters').update({ last_job_code: job }).eq('id', selectedCharId);

@@ -4,14 +4,14 @@ import { UI_STYLE } from '@/lib/styles';
 import { JOBS, JobCode } from '@/lib/constants/jobs';
 
 interface JobSelectorProps {
-	currentJob: string;
+	currentJob: JobCode;
 	onJobChange: (job: JobCode) => void;
 }
 
 export default function JobSelector({ currentJob, onJobChange }: JobSelectorProps) {
 	return (
-		<div className="flex items-center gap-3">
-			<label className={UI_STYLE.label}>Current Job</label>
+		<div className="flex items-center gap-2">
+			<label className={UI_STYLE.label}>Job Select</label>
 			<select
 				value={currentJob}
 				onChange={(e) => onJobChange(e.target.value as JobCode)}

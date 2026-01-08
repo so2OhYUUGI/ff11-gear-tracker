@@ -118,5 +118,17 @@ export const UI_STYLE = {
 
 	// 装備リストのコンテナ（タブとの一体化用）
 	gearListWrapper: "bg-white dark:bg-slate-900 border-x border-b border-slate-200 dark:border-slate-800 rounded-b-2xl p-4 shadow-sm",
-
+	// 装備スロット専用のスタイル定義
+	
+	gearSlot: {
+		container: "flex items-center p-3 sm:p-4 transition-all border-l-4 cursor-pointer hover:border-blue-500",
+		active: "border-l-blue-600 bg-white dark:bg-slate-800 shadow-sm",
+		inactive: "border-l-slate-300 dark:border-l-slate-700 opacity-80",
+		iconWrapper: "w-10 h-10 sm:w-12 sm:h-12 flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-950 rounded border border-slate-200 dark:border-slate-800 mr-4 shrink-0 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-colors",
+		iconText: "text-[8px] font-black text-slate-400 uppercase tracking-tighter mt-0.5",
+		details: "flex-grow min-w-0",
+		name: "font-bold text-slate-900 dark:text-slate-100 mb-1 truncate",
+		emptyText: "text-slate-400 text-xs italic py-2",
+		arrow: "ml-2 text-slate-300 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
+	},
 };
