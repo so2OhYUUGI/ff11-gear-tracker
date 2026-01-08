@@ -1,20 +1,29 @@
+/**
+ * src/components/gear/GearSlotList.tsx
+ * 役割: 各部位（頭・胴・手など）の装備状態をリスト表示するコンポーネント
+ * 選択された装束カテゴリ（AF1/AF2など）に基づき、現在の収集状況を一覧化して表示します。
+ */
+
 'use client';
 
 import { UI_STYLE } from '@/lib/styles';
 import { MAJOR_SLOTS } from '@/lib/constants/';
-import { CharacterGear } from '@/lib/types';
+import { CharacterGear, GearCategory } from '@/lib/types';
 
 interface GearSlotListProps {
-	gears: Record<string, CharacterGear>; // any を排除
+	gears: Record<string, CharacterGear>;
+	category: GearCategory; // ← 型定義に追加
 	loading: boolean;
 	onSlotClick?: (slot: { id: string, name: string }) => void;
 }
 
-export default function GearSlotList({ gears, loading, onSlotClick }: GearSlotListProps) {
+export default function GearSlotList({ gears, category, loading, onSlotClick }: GearSlotListProps) {
 	return (
 		<div className={UI_STYLE.section}>
 			<div className="flex justify-between items-center px-1 mb-2">
-				<h2 className={UI_STYLE.sectionTitleText}>Equipment Progress</h2>
+				<h2 className={UI_STYLE.sectionTitleText}>
+					Equipment Progress ({category})
+				</h2>
 				{loading && <span className={UI_STYLE.text.tiny + " text-blue-500 animate-pulse font-bold"}>SYNCING...</span>}
 			</div>
 
@@ -23,7 +32,8 @@ export default function GearSlotList({ gears, loading, onSlotClick }: GearSlotLi
 					const gear = gears[slot.id];
 					return (
 						<div
-							key={slot.id}
+							// categoryをkeyに含めることで、カテゴリ切り替え時に要素を確実にリフレッシュする
+							key={`${category}-${slot.id}`}
 							onClick={() => onSlotClick?.({ id: slot.id, name: slot.name })}
 							className={`${UI_STYLE.card} ${UI_STYLE.gearSlot.container} ${gear ? UI_STYLE.gearSlot.active : UI_STYLE.gearSlot.inactive} group`}
 						>
