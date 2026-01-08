@@ -60,3 +60,6 @@ export const JOB_MIN_TIER_RULES: Record<string, Record<GearCategory, number>> = 
 	GEO: TIER_109_VALUE,
 	RUN: TIER_109_VALUE,
 };
+
+// src/lib/constants/gear.ts の末尾に追加
+export const GEAR_CATEGORIES: GearCategory[] = ['AF', 'Relic', 'Empyrean'];
