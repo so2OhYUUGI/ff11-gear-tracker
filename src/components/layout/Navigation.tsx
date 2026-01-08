@@ -29,7 +29,6 @@ export default function Navigation() {
 
 	return (
 		<>
-			{/* PC用サイドバー */}
 			<aside className={UI_STYLE.nav.sidebar}>
 				<div className="p-6">
 					<h1 className={UI_STYLE.mainTitle + " text-white"}>FF11 Tracker</h1>
@@ -41,7 +40,6 @@ export default function Navigation() {
 				</nav>
 			</aside>
 
-			{/* スマホ用ボトムナビ */}
 			<nav className={UI_STYLE.nav.bottom}>
 				{NAV_ITEMS.map((item) => (
 					<NavItem key={item.href} item={item} />

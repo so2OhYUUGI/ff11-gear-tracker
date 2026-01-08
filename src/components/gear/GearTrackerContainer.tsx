@@ -83,7 +83,7 @@ export default function GearTrackerContainer({ initialCharacters, initialCharId 
 						</button>
 					))}
 				</div>
-
+				
 				{/* 装備進捗リスト本体 */}
 				<div className={UI_STYLE.gearListWrapper}>
 					<div className="flex justify-between items-center mb-4 px-1">
