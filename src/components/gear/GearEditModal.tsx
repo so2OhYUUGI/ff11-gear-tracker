@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { UI_STYLE } from '@/lib/styles';
-import { GearCategory } from '@/lib/types';
+import { GearCategory, GearItem } from '@/lib/types';
+import { JOB_MIN_TIER_RULES } from '@/lib/constants/gear';
 
 interface GearEditModalProps {
 	isOpen: boolean;
@@ -15,23 +16,37 @@ interface GearEditModalProps {
 	onSelect: () => void;
 }
 
-export default function GearEditModal({ isOpen, onClose, characterId, jobCode, category, slot, onSelect }: GearEditModalProps) {
+export default function GearEditModal({
+	isOpen, onClose, characterId, jobCode, category, slot, onSelect
+}: GearEditModalProps) {
 	const supabase = createClient();
-	const [items, setItems] = useState<any[]>([]);
+	const [items, setItems] = useState<GearItem[]>([]);
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		async function fetchTiers() {
 			if (!isOpen || !slot) return;
 			setLoading(true);
-			const { data } = await supabase
+
+			const { data, error } = await supabase
 				.from('items')
 				.select('*')
 				.eq('slot', slot.id)
 				.eq('category', category)
 				.contains('jobs', [jobCode])
 				.order('tier', { ascending: true });
-			setItems(data || []);
+
+			if (!error && data) {
+				let filtered = data as GearItem[];
+
+				// ジョブごとの最小ティア規則を適用 (GEO/RUNなどは109から)
+				const minTier = JOB_MIN_TIER_RULES[jobCode]?.[category];
+				if (minTier !== undefined) {
+					filtered = filtered.filter(item => item.tier >= minTier);
+				}
+
+				setItems(filtered);
+			}
 			setLoading(false);
 		}
 		fetchTiers();
@@ -42,7 +57,8 @@ export default function GearEditModal({ isOpen, onClose, characterId, jobCode, c
 		const { error } = await supabase
 			.from('character_gears')
 			.upsert({
-				character_id: characterId, job_code: jobCode, slot: slot.id, item_id: itemId, updated_at: new Date().toISOString()
+				character_id: characterId, job_code: jobCode, slot: slot.id,
+				item_id: itemId, updated_at: new Date().toISOString()
 			}, { onConflict: 'character_id, job_code, slot' });
 
 		if (!error) { onSelect(); onClose(); }
@@ -51,12 +67,12 @@ export default function GearEditModal({ isOpen, onClose, characterId, jobCode, c
 	if (!isOpen || !slot) return null;
 
 	return (
-		<div className={UI_STYLE.modal.overlay}>
-			<div className={UI_STYLE.modal.content}>
+		<div className={UI_STYLE.modal.overlay} onClick={onClose}>
+			<div className={UI_STYLE.modal.content} onClick={(e) => e.stopPropagation()}>
 				<div className={UI_STYLE.modal.header}>
 					<div>
-						<h3 className={UI_STYLE.cardTitle + " text-lg text-blue-600"}>{category} {slot.name} 進捗更新</h3>
-						<p className={UI_STYLE.text.tiny + " text-slate-500"}>Job: {jobCode}</p>
+						<h3 className={UI_STYLE.modal.title}>{category} {slot.name} 進捗更新</h3>
+						<p className={UI_STYLE.modal.subtitle}>Job: {jobCode}</p>
 					</div>
 					<button onClick={onClose} className={UI_STYLE.modal.close}>✕</button>
 				</div>
@@ -67,23 +83,27 @@ export default function GearEditModal({ isOpen, onClose, characterId, jobCode, c
 					</button>
 
 					{loading ? (
-						<div className={UI_STYLE.modal.empty + " animate-pulse"}>Loading Tiers...</div>
+						<div className={`${UI_STYLE.modal.empty} animate-pulse`}>Loading Tiers...</div>
 					) : items.length > 0 ? (
-						items.map(item => (
-							<button key={item.id} onClick={() => handleSelectItem(item.id)} className={UI_STYLE.modal.itemBtn}>
-								<div className="flex justify-between items-center w-full">
-									<div>
-										<div className="font-bold text-slate-800 dark:text-slate-100">{item.name_ja}</div>
-										<div className={UI_STYLE.badge.secondary + " mt-1"}>Tier: {item.tier === 0 ? 'NQ' : `+${item.tier}`}</div>
+						<div className="space-y-2">
+							{items.map(item => (
+								<button key={item.id} onClick={() => handleSelectItem(item.id)} className={UI_STYLE.modal.itemBtn}>
+									<div className="flex flex-col items-start">
+										<span className={UI_STYLE.modal.itemLabel}>{item.name_ja}</span>
+										<span className={UI_STYLE.badge.secondary}>Tier: {item.tier}</span>
 									</div>
-									<div className="text-blue-500 opacity-0 group-hover:opacity-100 font-black">SET ➔</div>
-								</div>
-							</button>
-						))
+									<div className={UI_STYLE.modal.actionText}>UPDATE ➔</div>
+								</button>
+							))}
+						</div>
 					) : (
-						<div className={UI_STYLE.modal.empty}>データ未登録</div>
+						<div className={UI_STYLE.modal.empty}>マスタデータ未登録 ({category})</div>
 					)}
 				</div>
+
+				<footer className={UI_STYLE.modal.footer}>
+					※ジョブおよびカテゴリーに適合する装束の強化段階が表示されています。
+				</footer>
 			</div>
 		</div>
 	);

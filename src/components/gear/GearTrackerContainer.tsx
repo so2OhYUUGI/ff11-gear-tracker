@@ -52,8 +52,13 @@ export default function GearTrackerContainer({ initialCharacters, initialCharId 
 		await supabase.from('characters').update({ last_job_code: job }).eq('id', selectedCharId);
 	};
 
+	// src/components/gear/GearTrackerContainer.tsx の return 部分
+
 	return (
 		<div className={`${UI_STYLE.container} ${UI_STYLE.pageWrapper}`}>
+
+			{/* 1. 固定ヘッダーセクション（隙間を排除） */}
+			{/* AppHeaderの高さ56pxに合わせるため top-[56px] (またはUI_STYLEで定義) */}
 			<div className={UI_STYLE.header.stickyWrapper}>
 				{char && (
 					<div className={UI_STYLE.header.session}>
@@ -65,24 +70,20 @@ export default function GearTrackerContainer({ initialCharacters, initialCharId 
 								{char.name}
 							</h1>
 						</div>
-						<div className={UI_STYLE.header.decorationText}>{currentJob}</div>
+						<div className={UI_STYLE.header.decorationText}>
+							{currentJob}
+						</div>
 					</div>
 				)}
 
 				<div className={UI_STYLE.header.user}>
-					<div className="flex items-center gap-2">
-						<label className={UI_STYLE.label}>Character</label>
-						<select value={selectedCharId} onChange={(e) => setSelectedCharId(e.target.value)} className={UI_STYLE.input}>
-							{initialCharacters.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-						</select>
-					</div>
+					<span className={UI_STYLE.label + " ml-2"}>Job Change</span>
 					<JobSelector currentJob={currentJob} onJobChange={handleJobChange} />
 				</div>
 			</div>
 
 			{/* 2. メインコンテンツ（カテゴリータブ + 装備リスト） */}
-			<div className="mt-4">
-				{/* カテゴリー切り替えタブ */}
+			<div className={UI_STYLE.gearListSection}>
 				<div className={UI_STYLE.tab.container}>
 					{(['AF', 'Relic', 'Empyrean'] as GearCategory[]).map(cat => (
 						<button
@@ -95,8 +96,7 @@ export default function GearTrackerContainer({ initialCharacters, initialCharId 
 						</button>
 					))}
 				</div>
-				
-				{/* 装備進捗リスト本体 */}
+
 				<div className={UI_STYLE.gearListWrapper}>
 					<div className="flex justify-between items-center mb-4 px-1">
 						<h2 className={UI_STYLE.sectionTitleText}>
@@ -117,7 +117,7 @@ export default function GearTrackerContainer({ initialCharacters, initialCharId 
 				</div>
 			</div>
 
-			{/* 3. 進捗更新モーダル */}
+			{/* 3. モーダル */}
 			<GearEditModal
 				isOpen={!!editingSlot}
 				onClose={() => setEditingSlot(null)}

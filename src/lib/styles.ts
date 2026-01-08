@@ -1,6 +1,6 @@
 export const UI_STYLE = {
 	container: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8",
-	pageWrapper: "pt-4 pb-24 md:pb-10",
+	pageWrapper: "pt-0 pb-24 md:pb-10",
 
 	// アプリ全体の枠組み
 	shell: {
@@ -9,20 +9,22 @@ export const UI_STYLE = {
 		content: "flex-1 overflow-y-auto",
 	},
 
-	// ヘッダー・セッション表示
 	header: {
 		app: {
-			wrapper: "sticky top-0 z-40 w-full bg-background/95 backdrop-blur border-b border-border/60",
+			wrapper: "sticky top-0 z-40 w-full bg-background border-b border-border/60",
 			inner: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between",
 			logo: "text-lg font-black italic tracking-tighter text-blue-600",
 			logout: "text-[10px] font-black text-slate-500 hover:text-red-500 transition-colors py-1 px-3 border border-slate-200 dark:border-slate-700 rounded-full bg-white dark:bg-slate-800"
 		},
-		stickyWrapper: "sticky top-14 z-30 bg-background/95 backdrop-blur py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8",
-		session: "flex items-center justify-between bg-blue-600 text-white p-4 rounded-xl shadow-lg relative overflow-hidden",
-		user: "flex items-center justify-between bg-muted/40 p-3 rounded-lg border border-border/60 mt-2",
+		// stickyWrapper の py-2 を py-0 にし、密着度を高める。z-indexを30に固定
+		stickyWrapper: "sticky top-[56px] z-30 bg-background/95 backdrop-blur -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 border-b border-border/40 pb-4",
+		session: "flex items-center justify-between bg-blue-600 text-white p-4 rounded-xl shadow-lg relative overflow-hidden mt-4",
+		user: "flex items-center justify-between bg-muted/40 p-2 rounded-lg border border-border/60 mt-2",
 		decorationText: "absolute right-4 bottom-0 text-7xl font-black italic opacity-10 select-none text-white tracking-tighter pointer-events-none",
-		backButton: "h-9 w-9 bg-slate-800 hover:bg-black text-white rounded-full flex items-center justify-center font-bold shadow-lg transition-transform active:scale-95",
 	},
+
+	// 装備リスト側の余白調整
+	gearListSection: "mt-4 relative z-10",
 
 	// モーダル
 	modal: {
@@ -33,7 +35,12 @@ export const UI_STYLE = {
 		body: "flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar",
 		empty: "py-10 text-center text-slate-400 text-sm italic",
 		itemBtn: "w-full p-4 text-left border border-slate-200 dark:border-slate-700 rounded-xl hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all group flex justify-between items-center",
-		removeBtn: "w-full p-4 text-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 transition-all text-[10px] font-black text-slate-400 uppercase tracking-widest"
+		removeBtn: "w-full p-4 text-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 transition-all text-[10px] font-black text-slate-400 uppercase tracking-widest",
+		title: "text-lg font-black text-blue-600 dark:text-blue-400 uppercase tracking-tight",
+		subtitle: "text-[10px] font-bold text-slate-500 italic uppercase tracking-widest",
+		footer: "mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-[9px] text-slate-400 leading-relaxed italic",
+		actionText: "text-blue-500 font-black text-[10px] opacity-0 group-hover:opacity-100 transition-opacity",
+		itemLabel: "font-bold text-slate-800 dark:text-slate-100",
 	},
 
 	// キャラクターカード
@@ -119,7 +126,7 @@ export const UI_STYLE = {
 	// 装備リストのコンテナ（タブとの一体化用）
 	gearListWrapper: "bg-white dark:bg-slate-900 border-x border-b border-slate-200 dark:border-slate-800 rounded-b-2xl p-4 shadow-sm",
 	// 装備スロット専用のスタイル定義
-	
+
 	gearSlot: {
 		container: "flex items-center p-3 sm:p-4 transition-all border-l-4 cursor-pointer hover:border-blue-500",
 		active: "border-l-blue-600 bg-white dark:bg-slate-800 shadow-sm",
@@ -131,4 +138,30 @@ export const UI_STYLE = {
 		emptyText: "text-slate-400 text-xs italic py-2",
 		arrow: "ml-2 text-slate-300 opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all"
 	},
+
+	jobSelector: {
+		trigger: "flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-black text-white rounded-lg border border-slate-700 shadow-lg transition-all active:scale-95 group",
+		triggerLabel: "text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-blue-400",
+		triggerValue: "text-sm font-black italic text-white",
+
+		overlay: "fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm",
+		menu: "bg-slate-900 border-2 border-slate-700 p-3 shadow-2xl rounded-sm animate-in zoom-in-95 duration-100",
+
+		// grid-flow-col を削除し、自然な横2列の並びに変更
+		grid: "grid grid-cols-2 gap-x-6 gap-y-0.5",
+
+		button: "flex items-center w-36 px-3 py-1 text-[11px] font-black italic tracking-tighter transition-colors rounded-sm",
+		active: "bg-blue-600 text-white shadow-[inset_0_0_8px_rgba(255,255,255,0.3)]",
+		inactive: "text-slate-400 hover:bg-slate-800 hover:text-white",
+	},
+
+	// ジョブグリッドメニュー
+	jobGrid: {
+		// モバイルでは4列、タブレットでは6列、PCでは11列（11x2）に自動調整
+		container: "grid grid-cols-4 sm:grid-cols-6 md:grid-cols-11 gap-1 bg-slate-100 dark:bg-slate-900/50 p-1.5 rounded-xl border border-border/60",
+		button: "flex items-center justify-center py-2 px-1 rounded-lg text-[10px] font-black italic transition-all border border-transparent tracking-tighter",
+		active: "bg-blue-600 text-white shadow-md border-blue-400 scale-[1.03] z-10",
+		inactive: "text-slate-400 dark:text-slate-500 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white",
+	},
+
 };
