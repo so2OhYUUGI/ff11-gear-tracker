@@ -8,7 +8,7 @@ export const UI_STYLE = {
 		main: "flex flex-col flex-1 min-w-0 h-full relative",
 		content: "flex-1 overflow-y-auto",
 	},
-
+	
 	header: {
 		app: {
 			wrapper: "sticky top-0 z-40 w-full bg-background border-b border-border/60",
@@ -18,13 +18,14 @@ export const UI_STYLE = {
 		},
 		backButton: "h-9 w-9 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center font-bold shadow-sm transition-all active:scale-95 shrink-0 z-30 mr-4",
 		// stickyWrapper に top-14 を統合
-		stickyWrapper: "sticky top-14 z-30 bg-background/95 backdrop-blur py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 border-b border-border/40 pb-4",
+		stickyWrapper: "sticky top-0 z-30 bg-background/95 backdrop-blur py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 border-b border-border/40 pb-4",
 		// user 操作バーの下に余白を追加 (mt-2 -> my-2)
 		user: "flex items-center justify-between bg-muted/40 p-2 rounded-lg border border-border/60 my-2",
  		// stickyWrapper の py-2 を py-0 にし、密着度を高める。z-indexを30に固定
 		decorationText: "absolute right-4 bottom-0 text-7xl font-black italic opacity-10 select-none text-white tracking-tighter pointer-events-none",
 		session: "flex items-center justify-between text-white p-4 rounded-xl shadow-lg relative overflow-hidden",
 	},
+
 	gearListSection: "relative z-10",
 
 	tab: {
