@@ -72,4 +72,19 @@ export const UI_STYLE = {
 		label: "text-[10px] md:text-sm font-bold uppercase tracking-tighter md:tracking-normal",
 	},
 
+	// キャラクター選択カード専用
+	characterCard: {
+		wrapper: "group relative flex flex-col justify-between min-h-[140px] transition-all duration-300 border-t-[8px] border-x border-b border-x-slate-200 border-b-slate-200 dark:border-x-slate-800 dark:border-b-slate-800 hover:shadow-lg bg-white dark:bg-slate-900",
+
+		// truncateを解除し、2行までの折り返しを許可（長い名前対策）
+		name: "text-lg font-black text-slate-900 dark:text-white leading-tight group-hover:text-blue-600 transition-colors line-clamp-2 break-all",
+
+		// 絶対配置で右上に浮かせる
+		jobBadge: "absolute top-2 right-2 bg-slate-100/90 dark:bg-slate-800/90 backdrop-blur-sm px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 text-[10px] font-black italic text-slate-500 shadow-sm z-20",
+
+		accountBadge: "inline-flex items-center px-2 py-0.5 rounded text-[8px] font-black text-white uppercase tracking-widest mt-2",
+		world: "text-[9px] font-bold uppercase text-slate-400 tracking-wider mb-1",
+		selectText: "text-[10px] font-black text-blue-500 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0"
+	},
+
 };

@@ -6,9 +6,11 @@ import { MAJOR_SLOTS } from '@/lib/constants/slots';
 interface GearSlotListProps {
 	gears: Record<string, any>;
 	loading: boolean;
+	// ↓ ここを 'onSlotClick?:' に変更（'?' を追加）
+	onSlotClick?: (slot: { id: string, name: string }) => void;
 }
 
-export default function GearSlotList({ gears, loading }: GearSlotListProps) {
+export default function GearSlotList({ gears, loading, onSlotClick }: GearSlotListProps) {
 	return (
 		<div className={UI_STYLE.section}>
 			<div className="flex justify-between items-center px-1">
@@ -22,7 +24,9 @@ export default function GearSlotList({ gears, loading }: GearSlotListProps) {
 					return (
 						<div
 							key={slot.id}
-							className={`${UI_STYLE.card} ${gear ? UI_STYLE.cardActive : UI_STYLE.cardInactive} flex items-center p-3 sm:p-4 transition-all border-l-4 ${gear ? 'border-l-blue-500' : 'border-l-border'}`}
+							// ↓ onSlotClick が渡されている場合のみ実行する
+							onClick={() => onSlotClick?.({ id: slot.id, name: slot.name })}
+							className={`${UI_STYLE.card} ${gear ? UI_STYLE.cardActive : UI_STYLE.cardInactive} flex items-center p-3 sm:p-4 transition-all border-l-4 ${gear ? 'border-l-blue-500' : 'border-l-border'} ${onSlotClick ? 'cursor-pointer hover:border-blue-500' : ''}`}
 						>
 							<div className="w-10 h-10 sm:w-12 sm:h-12 flex flex-col items-center justify-center bg-muted rounded border border-border/50 mr-4 shrink-0">
 								<span className="text-xl">{slot.icon}</span>

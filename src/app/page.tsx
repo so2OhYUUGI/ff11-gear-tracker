@@ -1,43 +1,49 @@
+// src/app/page.tsx
+
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import CharacterManager from "@/components/character/CharacterManager";
 import { UI_STYLE } from "@/lib/styles";
+import { getSystemColor } from "@/lib/colors";
 
 export default async function Home() {
   const supabase = await createClient();
-
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return redirect("/login");
 
   const { data: characters } = await supabase
     .from("characters")
-    .select("id, name, world")
+    .select(`
+      id, name, world, last_job_code,
+      game_accounts ( id, name, color_code )
+    `)
     .order("created_at", { ascending: true });
+
+  // アカウントごとにグループ化
+  const groupedCharacters = characters?.reduce((acc, char) => {
+    const account = char.game_accounts;
+    const accountId = account?.id || 'unlinked';
+
+    if (!acc[accountId]) {
+      acc[accountId] = {
+        name: account?.name || '未紐付け',
+        // DBに色があればそれを使用、なければシステムカラーを生成
+        color: account?.color_code || getSystemColor(accountId),
+        chars: []
+      };
+    }
+    acc[accountId].chars.push(char);
+    return acc;
+  }, {} as Record<string, { name: string, color: string, chars: any[] }>);
 
   return (
     <div className={UI_STYLE.container}>
-      {/* ウェルカムメッセージ */}
-      <section className="mb-10">
+      <header className="mb-10">
         <h1 className={UI_STYLE.mainTitle}>Vana'diel Portal</h1>
-        <p className="text-slate-500 text-sm">FF11 Gear Tracker へようこそ。作成中の装束やキャラクターを管理しましょう。</p>
-      </section>
+        <p className={UI_STYLE.label}>操作するキャラクターを選択してください</p>
+      </header>
 
-      {/* サマリーパネル（将来的にここに全体進捗などを出す） */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        <div className={UI_STYLE.card + " bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/30"}>
-          <h3 className={UI_STYLE.cardTitle}>Global Progress</h3>
-          <p className="text-3xl font-black text-blue-600 mt-2">-- %</p>
-          <p className={UI_STYLE.text.tiny + " mt-1"}>Coming Soon: アカウント全体の達成率</p>
-        </div>
-        <div className={UI_STYLE.card}>
-          <h3 className={UI_STYLE.cardTitle}>Quick Stats</h3>
-          <p className="text-slate-500 text-sm mt-2">登録キャラ数: {characters?.length || 0}</p>
-          <p className="text-slate-500 text-sm">直近の更新: ---</p>
-        </div>
-      </div>
-
-      {/* キャラクター選択セクション */}
-      <CharacterManager initialCharacters={characters || []} />
+      <CharacterManager groupedCharacters={groupedCharacters || {}} />
     </div>
   );
 }
