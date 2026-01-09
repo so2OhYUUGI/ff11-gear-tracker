@@ -147,13 +147,39 @@ FF11 装束強化進捗トラッカー。
   - ジョブ選択リスト内の表記を日本語（戦士、風水士等）にアップデート。
   - ヘッダー表示はデザイン性を重視し、アルファベット3文字表記を維持。
 
-  
-### 次回のタスク
-- [ ] 装備未登録時のデフォルト表示の改善。
-- [ ] 強化段階（Status）の選択肢を装束ごとに最適化。
-- [ ] ジョブ変更時のUIフィードバック（ローディング表示など）の微調整。
+  ## [2026-01-09] - 装束カテゴリ完全対応とJobSelectorの高度なUI調整
 
-### 5. 次回のタスク (2026-01-09 予定)
+### 本日の進捗
+- **装束カテゴリ切り替え機能の実装**:
+  - AF / Relic / Empyrean を切り替えて、それぞれの強化進捗を独立して管理できる機能を実装。
+  - `GearSlotList` に `key` プロパティ（`${currentJob}-${activeCategory}`）を付与し、切り替え時の確実なUIリフレッシュを保証。
+- **データベース構造の最適化 (Supabase)**:
+  - `character_gears` テーブルに `category` カラムを追加し、装束シリーズの識別を可能にした。
+  - 複合ユニーク制約 `unique_gear_entry` を `(character_id, job_code, category, slot)` で再定義し、データの重複保存を防止。
+  - `items` テーブル（マスターデータ）のテーブル名不一致による400エラーを解消。
+- **JobSelector の日本語化とレイアウト修正**:
+  - `constants/index.ts` に `JOB_DETAILS` を導入し、選択リスト内のジョブ名を日本語表記（戦士、モンク等）にアップデート。
+  - ヘッダーのトリガー表示はデザイン性を重視し、英語略称（WAR, GEO等）を維持。
+
+### 技術的課題と解決策
+- **409 Conflict / 400 Bad Request**:
+  - DB側の古いユニーク制約の削除と、プログラム側の `upsert` 時の `onConflict` 指定を一致させることで解決。
+- **JobSelector の配置・重なり問題**:
+  - **重なり**: `stickyWrapper` (z-50) と `app.wrapper` (z-40) の重なり順を入れ替え、ポップアップがアプリヘッダーに隠れないよう修正。
+  - **幅の制限**: 親要素の `flex` コンテキストによる圧縮を回避するため、あえて `JobSelector` ルートの `relative` を削除。
+  - **絶対配置**: `relative` 排除に伴い、`styles.ts` 側で `right-0` および `top` のオフセット値を調整し、画面右端かつボタン直下にピタッと吸着する配置を実現。
+
+### 変更ファイル
+- `src/lib/types.ts`: `CharacterGear` 型の拡張と `GearItem` との統合。
+- `src/lib/constants/index.ts`: `JOB_DETAILS` 定数の追加。
+- `src/lib/styles.ts`: z-index 階層の整理と `jobSelector.menu` の配置ハック。
+- `src/components/gear/JobSelector.tsx`: 日本語名称対応と `relative` 排除による配置最適化。
+- `src/components/gear/hooks/useGearTracker.ts`: `category` を含めたフェッチロジックの実装。
+
+### 5. 次回のタスク
+- [ ] 装備品の強化段階（Tier）に応じたステータス表示の検討。
+- [ ] 大量のマスターデータ（全ジョブの装束名）の正確性の検証。
+- [ ] 画面スクロール時の各Sticky要素の挙動の微調整。
 
 #### 1. データベース(Supabase)のスキーマ拡張
 - **`character_gears` テーブルへのカラム追加**:
