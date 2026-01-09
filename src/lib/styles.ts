@@ -108,8 +108,12 @@ export const UI_STYLE = {
 	title: "text-2xl font-bold text-slate-900 dark:text-white mb-6",
 
 	// ボタン: 背景青、文字白を明示
-	button: "inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50",
-
+	button: {
+		base: "inline-flex items-center justify-center transition-all active:scale-95 disabled:opacity-50 font-bold tracking-tighter uppercase rounded-md",
+		primary: "bg-blue-600 hover:bg-blue-700 text-white shadow-sm",
+		secondary: "bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200",
+	},
+	
 	// サブボタン: 背景グレー、文字白を明示
 	buttonSecondary: "inline-flex items-center justify-center px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2",
 

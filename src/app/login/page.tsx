@@ -1,71 +1,97 @@
-import { login, signup } from "../actions";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, CheckCircle2 } from "lucide-react"; // アイコン
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+"use client";
 
-// searchParams を受け取る (Next.js 15 の仕様に合わせる)
-export default async function LoginPage({
-	searchParams,
-}: {
-	searchParams: Promise<{ error?: string; message?: string }>;
-}) {
-	const { error, message } = await searchParams;
+import { useSearchParams } from "next/navigation";
+import { login, signup } from "../actions";
+import { UI_STYLE } from "@/lib/styles";
+import { Suspense } from "react";
+
+function LoginForm() {
+	const searchParams = useSearchParams();
+	const message = searchParams.get("message");
+	const error = searchParams.get("error");
 
 	return (
-		<div className="flex items-center justify-center min-h-screen bg-muted/40 p-4">
-			<Card className="w-full max-w-md shadow-lg">
-				<CardHeader className="space-y-1">
-					<CardTitle className="text-2xl font-bold text-center">FF11 Gear Tracker</CardTitle>
-					<CardDescription className="text-center">
-						アカウントにログインするか、新しく作成してください
-					</CardDescription>
-				</CardHeader>
-
-				<CardContent className="space-y-4">
-					{/* --- エラーメッセージの表示 --- */}
-					{error && (
-						<Alert variant="destructive">
-							<AlertCircle className="h-4 w-4" />
-							<AlertTitle>エラー</AlertTitle>
-							<AlertDescription>{error}</AlertDescription>
-						</Alert>
-					)}
-
-					{/* --- 成功メッセージの表示 (新規登録時など) --- */}
-					{message && (
-						<Alert className="border-green-500 text-green-600">
-							<CheckCircle2 className="h-4 w-4 stroke-green-600" />
-							<AlertTitle>通知</AlertTitle>
-							<AlertDescription>{message}</AlertDescription>
-						</Alert>
-					)}
-
-					<form className="space-y-4">
-						<div className="space-y-2">
-							<Label htmlFor="email">メールアドレス</Label>
-							<Input id="email" name="email" type="email" placeholder="name@example.com" required />
-						</div>
-						<div className="space-y-2">
-							<Label htmlFor="password">パスワード</Label>
-							<Input id="password" name="password" type="password" required />
-						</div>
-
-						<div className="flex flex-col gap-2 pt-2">
-							<Button formAction={login} className="w-full">ログイン</Button>
-							<Button formAction={signup} variant="outline" className="w-full">新規登録</Button>
-						</div>
-					</form>
-				</CardContent>
-
-				<CardFooter>
-					<p className="text-xs text-center w-full text-muted-foreground">
-						※新規登録後は確認メールが送信されます。
+		<div className={`${UI_STYLE.container} flex items-center justify-center min-h-[80vh]`}>
+			<div className={`${UI_STYLE.card} w-full max-w-md p-8 bg-slate-900/80`}>
+				<div className="mb-8 text-center">
+					<h1 className="text-3xl font-black italic tracking-tighter text-white drop-shadow-md">
+						FF11 GEAR TRACKER
+					</h1>
+					<p className={UI_STYLE.text.label + " opacity-50 uppercase tracking-widest mt-1"}>
+						Authentication Required
 					</p>
-				</CardFooter>
-			</Card>
+				</div>
+
+				{/* エラー表示（Alertコンポーネントの代わり） */}
+				{(error || message) && (
+					<div className="mb-6 border-l-4 border-red-600 bg-red-950/30 p-4 animate-in fade-in slide-in-from-top-1">
+						<div className={`${UI_STYLE.label} text-red-500 mb-1 flex items-center gap-2`}>
+							<span className="text-xs">●</span> SYSTEM MESSAGE
+						</div>
+						<div className={`${UI_STYLE.text.tiny} text-slate-200 leading-relaxed`}>
+							{error || message}
+						</div>
+					</div>
+				)}
+
+				<form className="space-y-6">
+					<div className="space-y-2">
+						<label htmlFor="email" className={UI_STYLE.label}>
+							Email Address
+						</label>
+						<input
+							id="email"
+							name="email"
+							type="email"
+							placeholder="vana_diel@example.com"
+							required
+							className={UI_STYLE.input}
+						/>
+					</div>
+
+					<div className="space-y-2">
+						<label htmlFor="password" className={UI_STYLE.label}>
+							Password
+						</label>
+						<input
+							id="password"
+							name="password"
+							type="password"
+							required
+							className={UI_STYLE.input}
+						/>
+					</div>
+
+					<div className="flex flex-col gap-3 pt-4">
+						<button
+							formAction={login}
+							className={`${UI_STYLE.button.primary} w-full py-3`}
+						>
+							ログイン
+						</button>
+						<button
+							formAction={signup}
+							className={`${UI_STYLE.button.secondary} w-full py-3`}
+						>
+							新規登録
+						</button>
+					</div>
+				</form>
+
+				<div className="mt-8 text-center">
+					<p className={`${UI_STYLE.text.tiny} opacity-30`}>
+						&copy; 2024 FF11 Gear Tracker / Developed by so2
+					</p>
+				</div>
+			</div>
 		</div>
+	);
+}
+
+export default function LoginPage() {
+	return (
+		<Suspense fallback={<div className={UI_STYLE.container}>Loading...</div>}>
+			<LoginForm />
+		</Suspense>
 	);
 }
