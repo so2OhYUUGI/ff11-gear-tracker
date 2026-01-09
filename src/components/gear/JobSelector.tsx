@@ -9,7 +9,8 @@
 
 import { useState } from 'react';
 import { UI_STYLE } from '@/lib/styles';
-import { JOBS, JobCode, JOB_DETAILS } from '@/lib/constants/';
+import { JOBS, JOB_DETAILS } from '@/lib/constants/';
+import { JobCode } from '@/lib/types';
 
 interface JobSelectorProps {
 	currentJob: JobCode;

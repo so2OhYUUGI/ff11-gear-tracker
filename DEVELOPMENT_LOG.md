@@ -39,7 +39,7 @@ FF11 装束強化進捗トラッカー。
     - styles.ts : デザインシステム (UI_STYLE)
     - types.ts : アプリ共通型定義
     - utils.ts : ビジネスロジック
-    - constants/ : jobs.ts, slots.ts, gear.ts (ティア定義)
+    - constants/ : 各種定数の宣言
     - colors.ts : アカウントカラー生成ロジック
 
 ---
