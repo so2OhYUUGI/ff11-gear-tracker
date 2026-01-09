@@ -82,6 +82,7 @@ export default function GearEditModal({
 			onClose();
 		} else {
 			console.error('Error saving gear:', error);
+			console.error('Message:', error.message);
 			alert('保存に失敗しました。');
 		}
 	};

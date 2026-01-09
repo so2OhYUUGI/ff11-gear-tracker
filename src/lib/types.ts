@@ -11,14 +11,6 @@ export interface GameAccount {
 	color_code: string | null;
 }
 
-export interface GearItem {
-	id: string;
-	name_ja: string;
-	tier: number;
-	category: GearCategory;
-	slot: string;
-}
-
 export interface Character {
 	id: string;
 	name: string;
@@ -33,15 +25,24 @@ export interface GroupedAccount {
 	chars: Character[];
 }
 
-export interface CharacterGear {
-	id?: string;
-	character_id: string;
-	job_code: string;
-	category: GearCategory; // ← 文字列ではなく GearCategory 型を指定
+export interface GearItem {
+	id: string;        // integer型に合わせて string から number へ変更
+	name_ja: string;
+	category: string;
+	tier: number;
+	jobs: string[];
 	slot: string;
-	item_id: number;
+	// 他のプロパティがあれば適宜追加
+}
+
+export interface CharacterGear {
+	id?: string;       // UUIDなので string のまま
+	character_id: string; // UUIDなので string のまま
+	job_code: string;
+	category: GearCategory;
+	slot: string;
+	item_id: string;   // integer型に合わせて string から number へ変更
 	status?: string;
 	updated_at?: string;
-	// items? に既存の GearItem 型をそのまま使うように修正
 	items?: GearItem;
 }
