@@ -30,29 +30,52 @@ export default function CharacterManager({ groupedCharacters }: CharacterManager
 					<button
 						key={char.id}
 						onClick={() => router.push(`/gear?charId=${char.id}`)}
-						className={`${UI_STYLE.card} ${UI_STYLE.characterCard.wrapper}`}
+						className={`${UI_STYLE.card} ${UI_STYLE.characterCard.wrapper} relative`}
 						style={{
 							borderTopColor: char.accountColor,
 							boxShadow: `0 4px 14px -2px ${char.accountColor}33`,
 						} as React.CSSProperties}
 					>
-						{/* 右上の絶対配置バッジ */}
-						<div className={UI_STYLE.characterCard.jobBadge}>
-							{char.last_job_code || 'WAR'}
+						{/* アカウントバッジ：左上に絶対配置 */}
+						<div
+							className={UI_STYLE.characterCard.accountBadge}
+							style={{
+								backgroundColor: char.accountColor,
+								position: 'absolute',
+								top: '0.75rem',
+								left: '0.75rem',
+								margin: 0,
+								zIndex: 10
+							}}
+						>
+							{char.accountName}
 						</div>
 
-						<div className="w-full pt-2">
-							<div className={UI_STYLE.characterCard.world}>{char.world}</div>
-							{/* 名前エリア：横幅をフルに使い、必要なら折り返す */}
+						{/* コンテンツエリア：バッジとの重なりを防ぐため上部に余白を確保 */}
+						<div className="w-full pt-6">
+
+							{/* ワールド：名前の上に移動 */}
+							<div className={`${UI_STYLE.characterCard.world} mb-1`}>
+								{char.world}
+							</div>
+
+							{/* 名前エリア */}
 							<h4 className={UI_STYLE.characterCard.name}>
 								{char.name}
 							</h4>
 
-							<div
-								className={UI_STYLE.characterCard.accountBadge}
-								style={{ backgroundColor: char.accountColor }}
-							>
-								{char.accountName}
+							{/* ジョブバッジ：名前の下に配置 */}
+							<div className="flex justify-center mt-2">
+								<div
+									className={UI_STYLE.characterCard.jobBadge}
+									style={{
+										position: 'static',
+										transform: 'none',
+										margin: 0
+									}}
+								>
+									{char.last_job_code || 'WAR'}
+								</div>
 							</div>
 						</div>
 

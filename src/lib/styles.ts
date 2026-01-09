@@ -155,7 +155,7 @@ export const UI_STYLE = {
 		triggerValue: "text-sm font-black italic text-white",
 
 		overlay: "fixed inset-0 z-[110] bg-transparent",
-		menu: "absolute top-[85px] right-4 w-[320px] bg-slate-900 border-2 border-slate-700 p-3 shadow-2xl rounded-lg z-[120]",
+		menu: "absolute top-full right-0 mt-2 w-[320px] min-w-[320px] max-w-none left-auto bg-slate-900 border-2 border-slate-700 p-3 shadow-2xl rounded-lg z-[100]",
 
 		// grid-flow-col を削除し、自然な横2列の並びに変更
 		grid: "grid grid-cols-2 gap-x-6 gap-y-0.5",
