@@ -1,6 +1,6 @@
 // src/hooks/useUpgradeRecipes.ts
 import { useState, useEffect } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 
 export function useUpgradeRecipes() {
 	const [recipes, setRecipes] = useState<any[]>([]);

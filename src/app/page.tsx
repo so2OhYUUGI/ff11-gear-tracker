@@ -1,5 +1,5 @@
 // src/app/page.tsx
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import CharacterManager from "@/components/character/CharacterManager";
 import { UI_STYLE } from "@/lib/styles";
