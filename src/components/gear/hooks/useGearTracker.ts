@@ -1,20 +1,19 @@
-// @file: useGearTracker.ts
-// @role: 装備管理のビジネスロジックを担当するカスタムフック。
-//        Supabaseとの通信、ジョブ・カテゴリの状態管理、表示用データへの整形を行う。
+/**
+ * src/components/gear/hooks/useGearTracker.ts
+ * 役割: 装備データの取得ロジック。
+ * 選択中のジョブと装束カテゴリに基づいて、Supabaseからデータを抽出します。
+ */
+
+'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/client'; // 正しいパス
 import { JobCode } from '@/lib/constants';
 import { Character, CharacterGear, GearCategory, GameAccount } from '@/lib/types';
-import { formatGearMap } from '@/lib/utils';
 import { getColorByIndex } from '@/lib/colors';
 
-export function useGearTracker(
-	initialCharacters: Character[],
-	allAccounts: GameAccount[],
-	initialCharId?: string | null
-) {
-	const supabase = createClient();
+export const useGearTracker = (initialCharacters: Character[], allAccounts: GameAccount[], initialCharId?: string | null) => {
+const supabase = createClient();
 	const [selectedCharId] = useState(initialCharId || initialCharacters[0]?.id || '');
 	const char = initialCharacters.find(c => c.id === selectedCharId);
 
@@ -28,28 +27,30 @@ export function useGearTracker(
 	const [loading, setLoading] = useState(false);
 	const [editingSlot, setEditingSlot] = useState<{ id: string, name: string } | null>(null);
 
-	// fetchGears を useCallback でラップして安定化
 	const fetchGears = useCallback(async () => {
-		if (!selectedCharId) return;
-
+		if (!selectedCharId || !currentJob || !activeCategory) return;
 		setLoading(true);
-		try {
-			const { data, error } = await supabase
-				.from('character_gears')
-				.select(`slot, items ( id, name_ja, tier, category )`)
-				.eq('character_id', selectedCharId)
-				.eq('job_code', currentJob);
 
-			if (error) throw error;
-			setGears(data ? formatGearMap(data as any) : {});
-		} catch (err) {
-			console.error('Error fetching gears:', err);
-		} finally {
-			setLoading(false);
+		const supabase = createClient();
+		const { data, error } = await supabase
+			.from('character_gears')
+			.select(`*, items:master_items(*)`)
+			.eq('character_id', selectedCharId)
+			.eq('job_code', currentJob)
+			.eq('category', activeCategory); // ★ ここでカテゴリを絞り込む！
+
+		if (!error && data) {
+			// slotをキーにしたオブジェクトに変換
+			const gearMap = data.reduce((acc, gear) => {
+				acc[gear.slot] = gear;
+				return acc;
+			}, {});
+			setGears(gearMap);
 		}
-	}, [supabase, selectedCharId, currentJob]);
+		setLoading(false);
+	}, [selectedCharId, currentJob, activeCategory]); // ★ activeCategory が変わったら再実行する
 
-	// ジョブやキャラが変わった時に再取得
+	// 切り替え時にデータを取得し直す
 	useEffect(() => {
 		fetchGears();
 	}, [fetchGears]);
@@ -72,6 +73,6 @@ export function useGearTracker(
 		setEditingSlot,
 		handleJobChange,
 		refreshGears: fetchGears,
-		selectedCharId
+		selectedCharId,
 	};
-}
+};

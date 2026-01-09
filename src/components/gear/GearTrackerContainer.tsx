@@ -68,8 +68,9 @@ export default function GearTrackerContainer({
 						<h2 className={UI_STYLE.sectionTitleText}>{activeCategory} PROGRESS</h2>
 						{loading && <span className={UI_STYLE.text.tiny + " text-blue-500 font-bold"}>SYNCING...</span>}
 					</div>
-					{/* 修正ポイント: activeCategory を渡す（GearSlotList側でフィルタリングするため） */}
+					{/* 修正ポイント: key を追加することで、カテゴリやジョブの切り替え時にリストを確実に再描画する */}
 					<GearSlotList
+						key={`${currentJob}-${activeCategory}`}
 						gears={gears}
 						category={activeCategory}
 						loading={loading}
