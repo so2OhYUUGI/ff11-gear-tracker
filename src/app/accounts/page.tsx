@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import AccountList from "@/components/account/AccountList"; // パス変更
 import { UI_STYLE } from "@/lib/styles";

@@ -23,6 +23,9 @@ FF11 装束強化進捗トラッカー。
   - app/ (Routing)
     - gear/ : 装束トラッカー画面
     - characters/ : キャラクター管理
+    - accounts/ : ゲームアカウント管理
+    - auth/ : アプリアカウント関連
+    - settings/ : アプリ設定など
     - page.tsx : 総合ポータル
     - layout.tsx : アプリ共通レイアウト（AppShell）
   - components/ (UI Components)
@@ -30,14 +33,14 @@ FF11 装束強化進捗トラッカー。
     - gear/ : GearTrackerContainer, JobSelector, GearSlotList, GearEditModal
     - gear/hooks/ : useGearTracker (ロジック抽出)
     - character/ : CharacterManager
+    - account/ : AccountList
   - lib/ (Shared Core)
+    - supabase/ : server/client SDK設定
     - styles.ts : デザインシステム (UI_STYLE)
     - types.ts : アプリ共通型定義
     - utils.ts : ビジネスロジック
     - constants/ : jobs.ts, slots.ts, gear.ts (ティア定義)
     - colors.ts : アカウントカラー生成ロジック
-  - utils/
-    - supabase/ : server/client SDK設定
 
 ---
 
