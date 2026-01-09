@@ -1,3 +1,10 @@
+/**
+ * @file: GearEditModal.tsx
+ * @role: 装備品選択・更新用のモーダルコンポーネント。
+ *        特定の部位（Slot）に対し、ジョブおよび装束カテゴリ（AF/RELIC/EMPY）に適合する
+ *        アイテムを検索し、進捗データを `character_gears` テーブルへ永続化します。
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -29,7 +36,7 @@ export default function GearEditModal({
 			setLoading(true);
 
 			const { data, error } = await supabase
-				.from('items')
+				.from('items') // ※DB上のテーブル名に合わせて適宜 master_items 等に変更してください
 				.select('*')
 				.eq('slot', slot.id)
 				.eq('category', category)
@@ -39,7 +46,6 @@ export default function GearEditModal({
 			if (!error && data) {
 				let filtered = data as GearItem[];
 
-				// ジョブごとの最小ティア規則を適用 (GEO/RUNなどは109から)
 				const minTier = JOB_MIN_TIER_RULES[jobCode]?.[category];
 				if (minTier !== undefined) {
 					filtered = filtered.filter(item => item.tier >= minTier);
@@ -52,16 +58,32 @@ export default function GearEditModal({
 		fetchTiers();
 	}, [isOpen, slot, jobCode, category, supabase]);
 
+	// アイテム選択時の保存処理
 	const handleSelectItem = async (itemId: string | null) => {
 		if (!slot) return;
+
+		// 修正ポイント: upsert のペイロードに category を含め、onConflict 条件も更新する
 		const { error } = await supabase
 			.from('character_gears')
 			.upsert({
-				character_id: characterId, job_code: jobCode, slot: slot.id,
-				item_id: itemId, updated_at: new Date().toISOString()
-			}, { onConflict: 'character_id, job_code, slot' });
+				character_id: characterId,
+				job_code: jobCode,
+				category: category, // ★これを追加
+				slot: slot.id,
+				item_id: itemId,
+				updated_at: new Date().toISOString()
+			}, {
+				// ★一意制約に合わせて category を含める
+				onConflict: 'character_id,job_code,category,slot'
+			});
 
-		if (!error) { onSelect(); onClose(); }
+		if (!error) {
+			onSelect(); // 画面のリフレッシュ（refreshGears）を実行
+			onClose();
+		} else {
+			console.error('Error saving gear:', error);
+			alert('保存に失敗しました。');
+		}
 	};
 
 	if (!isOpen || !slot) return null;

@@ -6,6 +6,7 @@
 1. **情報の永続性**: 「2. ディレクトリ構成」「3. データベース設計」は、AIによる要約や省略を厳禁とする。
 2. **情報の同期**: Gitへプッシュした、もしくはすることを確認したら、AIは本ドキュメントを最新の状態に更新し、ユーザーと同期すること。
 3. **視認性の確保**: ディレクトリ構成に特殊文字（ツリー記号）を使用せず、箇条書きリスト形式を維持すること。
+4. **コード修正時の確認**: 新規のコンポーネントは即座に生成すること。既存のコードを書き換えるときは、修正が必要なコンポーネントを提示し、そのコードのGitHub URLを求めること。
 
 ---
 
@@ -43,7 +44,7 @@ FF11 装束強化進捗トラッカー。
 ## 3. データベース設計 (Schema)
 | table_name          | columns                                                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------------------------- |
-| character_gears     | id, character_id, job_code, slot, item_id, status, updated_at                                                 |
+| character_gears     | id, character_id, job_code, slot, item_id, status, updated_at, category                                       |
 | characters          | id, user_id, name, world, account_label, race, gender, created_at, updated_at, game_account_id, last_job_code |
 | game_accounts       | id, user_id, name, created_at, color_code                                                                     |
 | gear_progression    | id, character_id, group_name, job_code, slot, current_item_id, updated_at                                     |
@@ -54,7 +55,6 @@ FF11 装束強化進捗トラッカー。
 | recipe_requirements | id, group_id, item_id, quantity, step_name                                                                    |
 | recipes             | id, result_item_id, recipe_type, base_item_id, material_item_id, quantity, acquisition_note                   |
 | user_targets        | id, user_id, character_id, group_id, status, created_at, priority, user_note                                  |
-
 ---
 
 ## 4. 開発履歴
@@ -101,6 +101,27 @@ FF11 装束強化進捗トラッカー。
 ### 発見された課題（設計上の問題）
 - **データ保持の不備**: 現状のデータ構造が「ジョブ × 部位」のみをキーとしており、装束カテゴリ（AF1/2/3等）が考慮されていない。
 - **上書き問題**: 同一部位にAFを登録した後にレリックを登録すると、データが上書きされてしまう。本来はAFの強化状態とレリックの強化状態を「別々に」保持・確認できる必要がある。
+## [2026-01-09] - 装束カテゴリ切り替え機能の完全実装とスキーマ拡張
+
+### 本日の進捗
+- **装束切り替え（AF/Relic/Empyrean）の不具合解消**: 
+  - カテゴリを切り替えても表示が変わらない、またはデータが混ざる問題を解決。
+  - `GearSlotList` に `key={`${currentJob}-${activeCategory}`}` を付与し、状態の完全リセットを保証。
+- **データベース構造の拡張 (Supabase)**:
+  - `character_gears` テーブルに `category` カラムを追加。
+  - `unique_gear_entry` 制約（character_id, job_code, category, slot）を追加し、各装束シリーズの独立した進捗保存を可能にした。
+- **データ取得ロジックの修正**:
+  - `useGearTracker.ts` において、`category` を含めたクエリ発行と、カテゴリ変更時の自動再取得（Effectの依存配列への追加）を実装。
+
+### 変更されたファイルと役割
+- **`src/lib/types.ts`**: `CharacterGear` 型に `category` を追加。`items` プロパティを `GearItem` 型で共通化。
+- **`src/components/gear/GearTrackerContainer.tsx`**: Stickyヘッダー等のデザインを維持しつつ、カテゴリ状態の配信と `key` による再描画制御を実装。
+- **`src/components/gear/hooks/useGearTracker.ts`**: Supabase（createClient）を用いたカテゴリ別のデータ取得・状態管理ロジック。
+- **`src/components/gear/GearEditModal.tsx`**: 保存時に `category` を含めるように修正。
+
+### 決定された設計方針
+- **拡張性**: 今後「アンバス装備」や「装備比較セット（category: 'equipped'）」などが追加されても、同一テーブル・同一ロジックで対応可能な構造とした。
+- **ドキュメント化**: 各ファイルの冒頭に「@file」および「@role」を記述する習慣を開始。
 
 
 ### 5. 次回のタスク (2026-01-09 予定)
@@ -111,6 +132,9 @@ FF11 装束強化進捗トラッカー。
   - SQL実行例: `ALTER TABLE character_gears ADD COLUMN category TEXT;`
 - **既存データの移行**:
   - 必要に応じて、既存レコードにカテゴリを割り当てるか、テストデータをリセットする。
+### 次回のタスク
+- [ ] 未登録部位をクリックした際の初期選択リストの精度向上。
+- [ ] 装備品の強化段階（Status/Tier）の更新処理の安定化。
 
 #### 2. 型定義とロジックの修正
 - **TypeScript型定義の更新**:
