@@ -9,6 +9,7 @@
 import { UI_STYLE } from '@/lib/styles';
 import { MAJOR_SLOTS } from '@/lib/constants/';
 import { CharacterGear, GearCategory } from '@/lib/types';
+import GearUpgradeRecipe from './GearUpgradeRecipe';
 
 interface GearSlotListProps {
 	gears: Record<string, CharacterGear>;
@@ -58,6 +59,9 @@ export default function GearSlotList({ gears, category, loading, onSlotClick }: 
 								) : (
 									<div className={UI_STYLE.gearSlot.emptyText}>未登録</div>
 								)}
+							</div>
+							<div>
+								{gear && <GearUpgradeRecipe itemId={gear.item_id} />}
 							</div>
 
 							<div className={UI_STYLE.gearSlot.arrow}>➔</div>

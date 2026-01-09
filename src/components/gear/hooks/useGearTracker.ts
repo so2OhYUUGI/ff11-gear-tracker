@@ -4,29 +4,37 @@
  *        選択中のジョブと装束カテゴリに基づいて、Supabaseからデータを抽出します。
  *        また、キャラクターに紐づくアカウント情報からUIの表示カラーを管理します。
  */
-
+/**
+ * src/components/gear/hooks/useGearTracker.ts
+ */
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
-// 変更: JobCode を types からインポート
 import { JobCode, Character, CharacterGear, GearCategory, GameAccount } from '@/lib/types';
 import { getColorByIndex } from '@/lib/colors';
 
-export const useGearTracker = (initialCharacters: Character[], allAccounts: GameAccount[], initialCharId?: string | null) => {
+// 修正: 引数にデフォルト値 = [] を設定して安全化
+export const useGearTracker = (
+	initialCharacters: Character[] = [],
+	allAccounts: GameAccount[] = [],
+	initialCharId?: string | null
+) => {
 	const supabase = createClient();
 
 	// キャラクター選択の状態管理
+	// 修正: initialCharacters が空の場合も考慮
 	const [selectedCharId] = useState(initialCharId || initialCharacters[0]?.id || '');
-	const char = initialCharacters.find(c => c.id === selectedCharId);
+
+	// 修正: オプショナルチェーン (?.) を使用して安全にアクセス
+	const char = initialCharacters?.find(c => c.id === selectedCharId);
 
 	// アカウントカラーの算出
 	const accountData = Array.isArray(char?.game_accounts) ? char?.game_accounts[0] : char?.game_accounts;
-	const accountIndex = allAccounts.findIndex(acc => acc.id === accountData?.id);
+	const accountIndex = allAccounts?.findIndex(acc => acc.id === accountData?.id) ?? -1;
 	const accountColor = accountData?.color_code || getColorByIndex(accountIndex >= 0 ? accountIndex : 999);
 
 	// ジョブとカテゴリの状態管理
-	// 補足: JobCode型が厳格になったため、キャストは維持して安全性を確保
 	const [currentJob, setCurrentJob] = useState<JobCode>((char?.last_job_code as JobCode) || 'WAR');
 	const [activeCategory, setActiveCategory] = useState<GearCategory>('AF');
 
@@ -76,12 +84,14 @@ export const useGearTracker = (initialCharacters: Character[], allAccounts: Game
 	 */
 	const handleJobChange = async (job: JobCode) => {
 		setCurrentJob(job);
-		supabase.from('characters')
-			.update({ last_job_code: job })
-			.eq('id', selectedCharId)
-			.then(({ error }) => {
-				if (error) console.error('Error updating last_job:', error);
-			});
+		if (selectedCharId) {
+			supabase.from('characters')
+				.update({ last_job_code: job })
+				.eq('id', selectedCharId)
+				.then(({ error }) => {
+					if (error) console.error('Error updating last_job:', error);
+				});
+		}
 	};
 
 	return {
