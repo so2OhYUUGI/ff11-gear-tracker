@@ -25,7 +25,7 @@ export default function JobSelector({ currentJob, onJobChange }: JobSelectorProp
 
 	return (
 		/* この relative が基準となり、menu がボタンの真下に来ます */
-		<div className="relative inline-block shrink-0">
+		<div className="inline-block">
 			{/* トリガーボタン */}
 			<button
 				onClick={() => setIsOpen(true)}
