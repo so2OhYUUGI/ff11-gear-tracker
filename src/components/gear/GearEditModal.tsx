@@ -36,7 +36,7 @@ export default function GearEditModal({
 			setLoading(true);
 
 			const { data, error } = await supabase
-				.from('items') // ※DB上のテーブル名に合わせて適宜 master_items 等に変更してください
+				.from('items')
 				.select('*')
 				.eq('slot', slot.id)
 				.eq('category', category)
@@ -59,30 +59,28 @@ export default function GearEditModal({
 	}, [isOpen, slot, jobCode, category, supabase]);
 
 	// アイテム選択時の保存処理
-	const handleSelectItem = async (itemId: string | null) => {
+	// 変更: itemId を number | null に修正
+	const handleSelectItem = async (itemId: number | null) => {
 		if (!slot) return;
 
-		// 修正ポイント: upsert のペイロードに category を含め、onConflict 条件も更新する
 		const { error } = await supabase
 			.from('character_gears')
 			.upsert({
 				character_id: characterId,
 				job_code: jobCode,
-				category: category, // ★これを追加
+				category: category,
 				slot: slot.id,
-				item_id: itemId,
+				item_id: itemId, // DB側が integer ならこれでOK
 				updated_at: new Date().toISOString()
 			}, {
-				// ★一意制約に合わせて category を含める
 				onConflict: 'character_id,job_code,category,slot'
 			});
 
 		if (!error) {
-			onSelect(); // 画面のリフレッシュ（refreshGears）を実行
+			onSelect();
 			onClose();
 		} else {
 			console.error('Error saving gear:', error);
-			console.error('Message:', error.message);
 			alert('保存に失敗しました。');
 		}
 	};

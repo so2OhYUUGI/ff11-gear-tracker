@@ -154,17 +154,15 @@ export const UI_STYLE = {
 	},
 
 	jobSelector: {
-		wrapper: "inline-block overflow-visible", 
+		wrapper: "relative inline-block", 
 		// トリガー（ボタン）は w-52 で固定
 		trigger: "flex items-center justify-between w-52 flex-none px-4 py-2 bg-slate-800 hover:bg-black text-white rounded-lg border border-slate-700 shadow-lg transition-all active:scale-95 group",
-		// ポップアップメニュー側のスタイル
-		// 重点：w-max と whitespace-nowrap を追加
-		menu: "absolute top-full right-0 left-auto mt-1 w-[320px] max-w-none bg-slate-900 border-2 border-slate-700 p-3 shadow-2xl rounded-lg z-[120]",
 		triggerLabel: "text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-blue-400",
 		triggerValue: "text-sm font-black italic text-white flex-1 text-left ml-1",
 		triggerIcon: "text-slate-500 text-[8px] ml-1",
 
 		overlay: "fixed inset-0 z-[110] bg-transparent",
+		menu: "absolute top-full right-0 left-auto mt-1 w-[320px] max-w-none bg-slate-900 border-2 border-slate-700 p-3 shadow-2xl rounded-lg z-[120]",
 		menuHeader: "text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 px-2 border-b border-slate-800 pb-1 text-left",
 
 		// grid-flow-col を削除し、自然な横2列の並びに変更
