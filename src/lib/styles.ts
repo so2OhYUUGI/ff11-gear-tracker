@@ -17,14 +17,15 @@ export const UI_STYLE = {
 	
 	header: {
 		app: {
-			wrapper: "sticky top-0 z-30 w-full bg-background border-b border-border/60",
+			wrapper: "sticky top-0 z-40 w-full bg-background border-b border-border/60",
 			inner: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between",
 			logo: "text-lg font-black italic tracking-tighter text-blue-600",
 			logout: "text-[10px] font-black text-slate-500 hover:text-red-500 transition-colors py-1 px-3 border border-slate-200 dark:border-slate-700 rounded-full bg-white dark:bg-slate-800"
 		},
 		backButton: "h-9 w-9 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center font-bold shadow-sm transition-all active:scale-95 shrink-0 z-30 mr-4",
 		// stickyWrapper に top-14 を統合
-		stickyWrapper: "sticky top-0 z-40 bg-background/95 backdrop-blur py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 border-b border-border/40 pb-4 overflow-visible",		// user 操作バーの下に余白を追加 (mt-2 -> my-2)
+		stickyWrapper: "sticky top-0 z-50 bg-background/95 backdrop-blur py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 border-b border-border/40 pb-4 overflow-visible",
+				
 		user: "flex items-center justify-between w-full bg-muted/40 p-2 rounded-lg border border-border/60 my-2 overflow-visible",
 		// stickyWrapper の py-2 を py-0 にし、密着度を高める。z-indexを30に固定
 		decorationText: "absolute right-4 bottom-0 text-7xl font-black italic opacity-10 select-none text-white tracking-tighter pointer-events-none",
@@ -156,10 +157,9 @@ export const UI_STYLE = {
 		wrapper: "inline-block overflow-visible", 
 		// トリガー（ボタン）は w-52 で固定
 		trigger: "flex items-center justify-between w-52 flex-none px-4 py-2 bg-slate-800 hover:bg-black text-white rounded-lg border border-slate-700 shadow-lg transition-all active:scale-95 group",
-
 		// ポップアップメニュー側のスタイル
 		// 重点：w-max と whitespace-nowrap を追加
-		menu: "absolute z-[999] top-full right-0 left-auto mt-2 p-2 bg-slate-900 border border-slate-700 rounded-lg shadow-2xl w-max min-w-full max-w-[80vw] whitespace-nowrap overflow-visible",
+		menu: "absolute top-full right-0 left-auto mt-1 w-[320px] max-w-none bg-slate-900 border-2 border-slate-700 p-3 shadow-2xl rounded-lg z-[120]",
 		triggerLabel: "text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-blue-400",
 		triggerValue: "text-sm font-black italic text-white flex-1 text-left ml-1",
 		triggerIcon: "text-slate-500 text-[8px] ml-1",
