@@ -1,3 +1,9 @@
+/**
+ * @file: JobSelector.tsx
+ * @role: ジョブ選択ドロップダウン。
+ *        ボタンの左下角にメニューを整列させ、余計な視覚効果を排除しました。
+ */
+
 'use client';
 
 import { useState } from 'react';
@@ -18,7 +24,8 @@ export default function JobSelector({ currentJob, onJobChange }: JobSelectorProp
 	};
 
 	return (
-		<div className="relative">
+		/* この relative が基準となり、menu がボタンの真下に来ます */
+		<div className="relative inline-block shrink-0">
 			{/* トリガーボタン */}
 			<button
 				onClick={() => setIsOpen(true)}
@@ -29,13 +36,17 @@ export default function JobSelector({ currentJob, onJobChange }: JobSelectorProp
 				<span className="text-slate-500 text-[8px] ml-1">▼</span>
 			</button>
 
-			{/* ジョブ選択ポップアップ */}
+			{/* ジョブ選択ポップアップロジック */}
 			{isOpen && (
-				<div className={UI_STYLE.jobSelector.overlay} onClick={() => setIsOpen(false)}>
+				<>
+					{/* 1. 透明な背景（どこをクリックしても閉じるための層） */}
 					<div
-						className={UI_STYLE.jobSelector.menu}
-						onClick={(e) => e.stopPropagation()} // メニュー内クリックで閉じないように
-					>
+						className={UI_STYLE.jobSelector.overlay}
+						onClick={() => setIsOpen(false)}
+					/>
+
+					{/* 2. メニュー本体（ボタンの直下に配置） */}
+					<div className={UI_STYLE.jobSelector.menu}>
 						<div className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 px-2 border-b border-slate-800 pb-1">
 							Select Job
 						</div>
@@ -56,7 +67,7 @@ export default function JobSelector({ currentJob, onJobChange }: JobSelectorProp
 							))}
 						</div>
 					</div>
-				</div>
+				</>
 			)}
 		</div>
 	);

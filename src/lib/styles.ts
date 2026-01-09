@@ -1,3 +1,9 @@
+/**
+ * @file: styles.ts
+ * @role: アプリ全体のスタイル定義。
+ *        z-index の階層を整理し、要素の重なりと Sticky 位置の競合を解消します。
+*/
+
 export const UI_STYLE = {
 	container: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8",
 	pageWrapper: "pt-0 pb-24 md:pb-10", // 上部のパディングを完全に排除
@@ -6,7 +12,7 @@ export const UI_STYLE = {
 	shell: {
 		wrapper: "flex h-screen w-full overflow-hidden bg-background",
 		main: "flex flex-col flex-1 min-w-0 h-full relative",
-		content: "flex-1 overflow-y-auto",
+		content: "flex-1 overflow-y-auto relative z-0",
 	},
 	
 	header: {
@@ -18,7 +24,7 @@ export const UI_STYLE = {
 		},
 		backButton: "h-9 w-9 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center font-bold shadow-sm transition-all active:scale-95 shrink-0 z-30 mr-4",
 		// stickyWrapper に top-14 を統合
-		stickyWrapper: "sticky top-0 z-30 bg-background/95 backdrop-blur py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 border-b border-border/40 pb-4",
+		stickyWrapper: "sticky top-14 z-50 bg-background/95 backdrop-blur py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 border-b border-border/40 pb-4",
 		// user 操作バーの下に余白を追加 (mt-2 -> my-2)
 		user: "flex items-center justify-between bg-muted/40 p-2 rounded-lg border border-border/60 my-2",
  		// stickyWrapper の py-2 を py-0 にし、密着度を高める。z-indexを30に固定
@@ -144,13 +150,12 @@ export const UI_STYLE = {
 	},
 
 	jobSelector: {
-		trigger: "flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-black text-white rounded-lg border border-slate-700 shadow-lg transition-all active:scale-95 group",
+		trigger: "flex items-center justify-between w-48 px-4 py-2 bg-slate-800 hover:bg-black text-white rounded-lg border border-slate-700 shadow-lg transition-all active:scale-95 group",
 		triggerLabel: "text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-blue-400",
 		triggerValue: "text-sm font-black italic text-white",
 
-		overlay: "fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm",
-		menu: "bg-slate-900 border-2 border-slate-700 p-3 shadow-2xl rounded-sm animate-in zoom-in-95 duration-100",
-
+		overlay: "fixed inset-0 z-[110] bg-transparent",
+		menu: "absolute top-full right-0 left-auto mt-1 w-[320px] bg-slate-900 border-2 border-slate-700 p-3 shadow-2xl rounded-lg z-[120] origin-top-right translate-x-0",
 		// grid-flow-col を削除し、自然な横2列の並びに変更
 		grid: "grid grid-cols-2 gap-x-6 gap-y-0.5",
 
