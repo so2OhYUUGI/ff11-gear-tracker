@@ -1,15 +1,15 @@
 /**
  * @file: JobSelector.tsx
  * @role: ジョブ選択ドロップダウン。
- *        トリガー（ボタン）はクールな JobCode (WAR等) を、
- *        リスト内は分かりやすさを重視して JOB_DETAILS から日本語名を表示します。
+ *        ロジックとスタイルを完全に分離。表示名は JOB_DETAILS から取得し、
+ *        スタイルは UI_STYLE から一括参照します。
  */
 
 'use client';
 
 import { useState } from 'react';
 import { UI_STYLE } from '@/lib/styles';
-import { JOBS, JobCode, JOB_DETAILS } from '@/lib/constants/'; // JOB_DETAILS を追加
+import { JOBS, JobCode, JOB_DETAILS } from '@/lib/constants/';
 
 interface JobSelectorProps {
 	currentJob: JobCode;
@@ -25,26 +25,33 @@ export default function JobSelector({ currentJob, onJobChange }: JobSelectorProp
 	};
 
 	return (
-		<div className="inline-block">
-			{/* トリガーボタン: 英語3文字表記を維持 */}
+		/* すべて UI_STYLE を参照するように修正 */
+		<div className={UI_STYLE.jobSelector.wrapper}>
+			{/* トリガーボタン */}
 			<button
+				type="button"
 				onClick={() => setIsOpen(true)}
 				className={UI_STYLE.jobSelector.trigger}
 			>
 				<span className={UI_STYLE.jobSelector.triggerLabel}>Job : </span>
 				<span className={UI_STYLE.jobSelector.triggerValue}>{JOB_DETAILS[currentJob].name_ja}</span>
-				<span className="text-slate-500 text-[8px] ml-1">▼</span>
+				<span className={UI_STYLE.jobSelector.triggerIcon}>▼</span>
 			</button>
 
 			{isOpen && (
 				<>
+					{/* 透明な背景 */}
 					<div
 						className={UI_STYLE.jobSelector.overlay}
 						onClick={() => setIsOpen(false)}
 					/>
 
-					<div className={UI_STYLE.jobSelector.menu}>
-						<div className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 px-2 border-b border-slate-800 pb-1 text-left">
+					{/* ポップアップメニュー */}
+					<div
+						className={UI_STYLE.jobSelector.menu}
+						onClick={(e) => e.stopPropagation()}
+					>
+						<div className={UI_STYLE.jobSelector.menuHeader}>
 							Select Job
 						</div>
 
@@ -58,8 +65,7 @@ export default function JobSelector({ currentJob, onJobChange }: JobSelectorProp
 										${currentJob === job ? UI_STYLE.jobSelector.active : UI_STYLE.jobSelector.inactive}
 									`}
 								>
-									<span className="mr-2 opacity-30 text-[8px]">●</span>
-									{/* ★ 定数から日本語名を表示 */}
+									<span className={UI_STYLE.jobSelector.buttonDot}>●</span>
 									{JOB_DETAILS[job].name_ja}
 								</button>
 							))}

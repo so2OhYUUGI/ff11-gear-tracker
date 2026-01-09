@@ -149,17 +149,21 @@ export const UI_STYLE = {
 	},
 
 	jobSelector: {
-		trigger: "flex items-center justify-between w-48 flex-none px-4 py-2 bg-slate-800 hover:bg-black text-white rounded-lg border border-slate-700 shadow-lg transition-all active:scale-95 group",
+		wrapper: "inline-block", 
+		trigger: "flex items-center justify-between w-52 flex-none px-4 py-2 bg-slate-800 hover:bg-black text-white rounded-lg border border-slate-700 shadow-lg transition-all active:scale-95 group",
 		triggerLabel: "text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-blue-400",
-		triggerValue: "text-sm font-black italic text-white",
+		triggerValue: "text-sm font-black italic text-white flex-1 text-left ml-1",
+		triggerIcon: "text-slate-500 text-[8px] ml-1",
 
 		overlay: "fixed inset-0 z-[110] bg-transparent",
 		menu: "absolute top-full right-0 left-auto mt-1 w-[320px] max-w-none bg-slate-900 border-2 border-slate-700 p-3 shadow-2xl rounded-lg z-[120]",
+		menuHeader: "text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 px-2 border-b border-slate-800 pb-1 text-left",
 
 		// grid-flow-col を削除し、自然な横2列の並びに変更
-		grid: "grid grid-cols-2 gap-x-6 gap-y-0.5",
+		grid: "grid grid-cols-2 gap-x-4 gap-y-1", 
 
-		button: "flex items-center w-36 px-3 py-1 text-[11px] font-black italic tracking-tighter transition-colors rounded-sm",
+		button: "flex items-center w-[130px] px-3 py-1.5 text-[11px] font-black italic tracking-tighter transition-colors rounded-sm",
+		buttonDot: "mr-2 opacity-30 text-[8px] shrink-0", 
 		active: "bg-blue-600 text-white shadow-[inset_0_0_8px_rgba(255,255,255,0.3)]",
 		inactive: "text-slate-400 hover:bg-slate-800 hover:text-white",
 	},
