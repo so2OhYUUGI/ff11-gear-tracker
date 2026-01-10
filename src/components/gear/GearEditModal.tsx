@@ -1,8 +1,8 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { UI_STYLE } from '@/lib/styles';
 import { GearCategory, GearItem, JobCode } from '@/lib/types';
 import { JOB_MIN_TIER_RULES } from '@/lib/constants/';
 
@@ -10,10 +10,10 @@ interface GearEditModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	characterId: string;
-	jobCode: JobCode;               // string -> JobCode に変更
+	jobCode: JobCode;
 	category: GearCategory;
 	slot: { id: string, name: string } | null;
-	currentItemId?: number | null;  // ★ここがエラーの原因でした。この行が必要です。
+	currentItemId?: number | null;
 	onSelect: () => void;
 }
 
@@ -70,43 +70,48 @@ export default function GearEditModal({
 			alert('保存に失敗しました。');
 		}
 	};
+  
+  const getItemButtonClasses = (itemId: number) => {
+    const isActive = currentItemId === itemId;
+    return `modal__item-button ${isActive ? 'modal__item-button--active' : ''}`;
+  };
 
 	if (!isOpen || !slot) return null;
 
 	return (
-		<div className={UI_STYLE.modal.overlay} onClick={onClose}>
-			<div className={UI_STYLE.modal.content} onClick={(e) => e.stopPropagation()}>
-				<div className={UI_STYLE.modal.header}>
-					<h3 className={UI_STYLE.modal.title}>{category} {slot.name} 選択</h3>
-					<button onClick={onClose} className={UI_STYLE.modal.close}>✕</button>
+		<div className="modal__overlay" onClick={onClose}>
+			<div className="modal__content" onClick={(e) => e.stopPropagation()}>
+				<div className="modal__header">
+					<h3 className="modal__title">{category} {slot.name} 選択</h3>
+					<button onClick={onClose} className="modal__close-button">✕</button>
 				</div>
-				<div className={UI_STYLE.modal.body}>
-					<button onClick={() => handleSelectItem(null)} className={UI_STYLE.modal.removeBtn}>
+				<div className="modal__body">
+					<button onClick={() => handleSelectItem(null)} className="modal__remove-button">
 						❌ 未取得 / 装備なし (解除)
 					</button>
 					{loading ? (
-						<div className="text-center py-4 text-gray-500 animate-pulse">Loading...</div>
+						<div className="modal__loading-state">Loading...</div>
 					) : items.length > 0 ? (
 						<div className="space-y-2 mt-2">
 							{items.map(item => (
 								<button
 									key={item.id}
 									onClick={() => handleSelectItem(item.id)}
-									className={`${UI_STYLE.modal.itemBtn} ${currentItemId === item.id ? 'bg-slate-700 ring-1 ring-yellow-500' : ''}`}
+									className={getItemButtonClasses(item.id)}
 								>
 									<div className="flex flex-col items-start">
-										<span className={UI_STYLE.modal.itemLabel}>
+										<span className="modal__item-label">
 											{item.name_ja}
 											{currentItemId === item.id && <span className="text-yellow-400 text-xs ml-2">★装備中</span>}
 										</span>
-										<span className={UI_STYLE.badge.secondary}>Tier: {item.tier}</span>
+										<span className="badge badge--secondary">Tier: {item.tier}</span>
 									</div>
-									<div className={UI_STYLE.modal.actionText}>選択</div>
+									<div className="modal__action-text">選択</div>
 								</button>
 							))}
 						</div>
 					) : (
-						<div className={UI_STYLE.modal.empty}>データなし</div>
+						<div className="modal__empty-state">データなし</div>
 					)}
 				</div>
 			</div>

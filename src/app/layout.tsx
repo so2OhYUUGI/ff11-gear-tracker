@@ -1,7 +1,7 @@
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { UI_STYLE } from "@/lib/styles";
 import Navigation from "@/components/layout/Navigation";
 import AppHeader from "@/components/layout/AppHeader";
 
@@ -19,18 +19,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      {/* inter.className を body に適用することでフォントを維持 */}
-      <body className={`${inter.className} bg-background text-foreground antialiased`}>
-        <div className={UI_STYLE.shell.wrapper}>
-          {/* サイドバー/ボトムナビ */}
+      <body className={`${inter.className} antialiased`}>
+        <div className="app-shell-wrapper">
           <Navigation />
-
-          <div className={UI_STYLE.shell.main}>
-            {/* 共通ヘッダー：ログインユーザー情報は AppHeader 内部で取得可能 */}
+          <div className="app-shell-main">
             <AppHeader />
-
-            {/* メインコンテンツエリア：スクロール管理をここで行う */}
-            <main className={UI_STYLE.shell.content}>
+            <main className="app-shell-content">
               {children}
             </main>
           </div>

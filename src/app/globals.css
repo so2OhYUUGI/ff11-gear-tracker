@@ -1,125 +1,345 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@custom-variant dark (&:is(.dark *));
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
-}
-
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
+/* ===================================
+   プロジェクト固有の基本スタイル
+   =================================== */
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* ===================================
+   再利用可能なコンポーネントクラス
+   =================================== */
+
+@layer components {
+
+  /* -----------------------------------
+   * ページ全体・レイアウト関連
+   * ----------------------------------- */
+
+  .page-container {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .page-wrapper {
+    @apply pt-8 pb-24 md:pb-10;
+  }
+  
+  .section-title {
+    @apply text-xs font-black uppercase tracking-widest text-muted-foreground ml-1;
+  }
+
+  .page-description {
+    @apply text-muted-foreground mt-2;
+  }
+
+  .main-title {
+    @apply text-3xl font-black italic tracking-tighter text-primary;
+  }
+
+  /* -----------------------------------
+   * ヘッダー
+   * ----------------------------------- */
+
+  .app-header {
+    @apply sticky top-0 z-40 w-full bg-background border-b border-border/60;
+  }
+
+  .app-header__inner {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between;
+  }
+
+  .app-header__logo {
+    @apply text-lg font-black italic tracking-tighter text-blue-600;
+  }
+
+  .app-header__logout {
+    @apply text-xs font-black text-slate-500 hover:text-red-500 transition-colors py-1 px-3 border border-slate-200 dark:border-slate-700 rounded-full bg-white dark:bg-slate-800;
+  }
+
+  /* -----------------------------------
+   * ナビゲーション
+   * ----------------------------------- */
+
+  .main-nav {
+    @apply fixed bottom-0 left-0 right-0 z-50 h-16 border-t border-border/60 bg-background/95 backdrop-blur-sm md:relative md:h-auto md:border-none md:bg-transparent md:backdrop-blur-none;
+  }
+
+  .main-nav__list {
+    @apply grid h-full grid-cols-4 items-center md:flex md:space-x-4;
+  }
+
+  .main-nav__item {
+    @apply text-center;
+  }
+
+  .main-nav__link {
+    @apply flex flex-col items-center justify-center space-y-1 text-muted-foreground transition-colors hover:text-primary;
+  }
+
+  .main-nav__link--active {
+    @apply text-primary;
+  }
+
+  .main-nav__icon {
+    @apply h-6 w-6;
+  }
+
+  .main-nav__text {
+    @apply text-xs font-bold;
+  }
+
+  /* -----------------------------------
+   * ギアトラッカーページ
+   * ----------------------------------- */
+
+  .gear-tracker__header {
+    @apply sticky top-0 z-30 bg-background/95 backdrop-blur pt-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 border-b border-border/40 pb-4 overflow-visible;
+  }
+
+  .gear-tracker__session-card {
+    @apply flex items-center justify-between text-white p-4 rounded-xl shadow-lg relative overflow-hidden;
+  }
+
+  .gear-tracker__back-button {
+    @apply h-9 w-9 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center font-bold shadow-sm transition-all active:scale-95 shrink-0 z-10 mr-4;
+  }
+
+  .gear-tracker__world-name {
+    @apply text-sm font-bold opacity-80;
+  }
+
+  .gear-tracker__char-name {
+    @apply text-2xl font-black tracking-tight leading-none truncate;
+  }
+
+  .gear-tracker__job-decoration {
+    @apply absolute right-4 bottom-0 text-7xl font-black italic opacity-10 select-none text-white tracking-tighter pointer-events-none;
+  }
+
+  .gear-tracker__job-selector-bar {
+    @apply flex items-center justify-between w-full bg-muted/40 p-2 rounded-lg border border-border/60 mt-4;
+  }
+
+  .gear-tracker__list-section {
+    @apply relative z-10;
+  }
+
+  .gear-tracker__list-wrapper {
+    @apply bg-card border-x border-b border-border rounded-b-2xl p-4 shadow-sm;
+  }
+
+  /* -----------------------------------
+   * ジョブセレクター
+   * ----------------------------------- */
+
+  .job-selector__trigger {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2;
+  }
+
+  .job-selector__popover-content {
+    @apply z-50 w-[320px] p-0;
+  }
+
+  .job-selector__grid {
+    @apply grid grid-cols-4 gap-1 p-2;
+  }
+
+  .job-selector__job-button {
+    @apply flex flex-col items-center justify-center gap-1.5 rounded-lg p-2 text-center text-xs font-medium transition-colors hover:bg-muted/80;
+  }
+
+  .job-selector__job-button--active {
+    @apply bg-primary/10 text-primary;
+  }
+
+  .job-selector__job-icon {
+    @apply h-8 w-8 object-contain;
+  }
+
+  /* -----------------------------------
+   * ギアカテゴリタブ
+   * ----------------------------------- */
+
+  .gear-category-tabs__list {
+    @apply inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground;
+  }
+
+  .gear-category-tabs__trigger {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .gear-category-tabs__trigger--active {
+    @apply bg-background text-foreground shadow-sm;
+  }
+
+  /* -----------------------------------
+   * 装備スロットリスト
+   * ----------------------------------- */
+
+  .gear-slot-list {
+    @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4;
+  }
+
+  .gear-slot-list__syncing-text {
+    @apply text-xs font-mono animate-pulse text-primary/70;
+  }
+
+  .gear-slot-card {
+    @apply bg-card rounded-xl p-3 shadow-sm border-2 transition-all;
+  }
+
+  .gear-slot-card--equipped {
+    @apply border-primary/50 ring-1 ring-primary/20 shadow-lg;
+  }
+
+  .gear-slot-card--unequipped {
+    @apply border-border/80 opacity-90;
+  }
+
+  .gear-slot-card__header {
+    @apply flex justify-between items-start;
+  }
+
+  .gear-slot-card__slot-name {
+    @apply text-xs font-black uppercase tracking-tight text-foreground truncate;
+  }
+
+  .gear-slot-card__tier {
+    @apply text-2xl font-black tracking-tighter text-foreground;
+  }
+
+  .gear-slot-card__item-name {
+    @apply text-xs text-muted-foreground mt-1 truncate;
+  }
+
+  .gear-slot-card__progress-text {
+    @apply font-mono text-xs font-bold text-foreground mt-2;
+  }
+
+  /* -----------------------------------
+   * キャラクターカード
+   * ----------------------------------- */
+
+  .character-card {
+    @apply bg-card rounded-xl shadow-sm border border-border p-4 cursor-pointer transition-all hover:shadow-md hover:border-primary/50 relative overflow-hidden border-t-4;
+  }
+
+  .character-card__account-badge {
+    @apply absolute top-2 right-2 px-2 py-0.5 rounded text-white text-xs font-bold uppercase;
+  }
+
+  .character-card__content {
+    @apply pt-5;
+  }
+
+  .character-card__world {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .character-card__name {
+    @apply text-xl font-bold text-foreground mt-1 truncate;
+  }
+
+  .character-card__job-badge {
+    @apply inline-block bg-muted text-muted-foreground text-xs font-mono px-2 py-1 rounded mt-3;
+  }
+
+  .character-card__footer {
+    @apply mt-4 pt-3 border-t border-border/50 text-right;
+  }
+
+  .character-card__select-text {
+    @apply text-primary font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity;
+  }
+
+  .character-card--new {
+    @apply border-dashed border-2 border-border/80 bg-transparent hover:bg-muted/50 flex flex-col items-center justify-center text-muted-foreground;
+  }
+
+  /* -----------------------------------
+   * アカウントリスト
+   * ----------------------------------- */
+  .account-row {
+    @apply bg-card flex items-center justify-between gap-4 p-4 border-l-4;
+  }
+
+  .account-row__info {
+    @apply flex items-center gap-4 flex-1;
+  }
+
+  .account-row__color-preview {
+    @apply w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-lg shadow-inner;
+  }
+
+  .account-row__name {
+    @apply font-bold text-lg text-foreground;
+  }
+
+  .account-row__meta {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .account-row__stats {
+    @apply flex items-center gap-4;
+  }
+
+  .account-row__actions {
+    @apply flex items-center gap-2;
+  }
+
+  /* -----------------------------------
+   * 汎用コンポーネント
+   * ----------------------------------- */
+
+  .card {
+    @apply bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4;
+  }
+
+  .empty-state {
+    @apply text-center p-8 text-muted-foreground border-2 border-dashed rounded-lg;
+  }
+
+  /* -----------------------------------
+   * 汎用フォーム要素
+   * ----------------------------------- */
+
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 transition-all active:scale-95 disabled:opacity-50 font-bold tracking-tighter uppercase rounded-md shadow-sm;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white;
+  }
+
+  /* Light BG Secondary Button */
+  .btn-secondary {
+     @apply bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200;
+  }
+
+  /* Dark BG Secondary Button */
+  .btn-secondary-dark {
+    @apply bg-slate-600 hover:bg-slate-700 text-white;
+  }
+
+  .form-input {
+    @apply w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm font-bold;
+  }
+
+  .form-label {
+    @apply text-xs font-bold uppercase text-muted-foreground tracking-tighter block;
+  }
+
+  /* -----------------------------------
+   * 汎用テキストスタイル
+   * ----------------------------------- */
+
+  .text-tiny {
+    @apply text-xs font-medium uppercase;
   }
 }

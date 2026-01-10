@@ -1,14 +1,13 @@
+
 /**
  * @file: JobSelector.tsx
  * @role: ジョブ選択ドロップダウン。
- *        ロジックとスタイルを完全に分離。表示名は JOB_DETAILS から取得し、
- *        スタイルは UI_STYLE から一括参照します。
+ *        ロジックとスタイルを完全に分離。表示名は JOB_DETAILS から取得します。
  */
 
 'use client';
 
 import { useState } from 'react';
-import { UI_STYLE } from '@/lib/styles';
 import { JOBS, JOB_DETAILS } from '@/lib/constants/';
 import { JobCode } from '@/lib/types';
 
@@ -25,48 +24,49 @@ export default function JobSelector({ currentJob, onJobChange }: JobSelectorProp
 		setIsOpen(false);
 	};
 
+	const getButtonClasses = (job: JobCode) => {
+		const isActive = currentJob === job;
+		return `job-selector__button ${isActive ? 'job-selector__button--active' : 'job-selector__button--inactive'}`;
+	};
+
 	return (
-		/* すべて UI_STYLE を参照するように修正 */
-		<div className={UI_STYLE.jobSelector.wrapper}>
+		<div className="job-selector">
 			{/* トリガーボタン */}
 			<button
 				type="button"
 				onClick={() => setIsOpen(true)}
-				className={UI_STYLE.jobSelector.trigger}
+				className="job-selector__trigger"
 			>
-				<span className={UI_STYLE.jobSelector.triggerLabel}>Job : </span>
-				<span className={UI_STYLE.jobSelector.triggerValue}>{JOB_DETAILS[currentJob].name_ja}</span>
-				<span className={UI_STYLE.jobSelector.triggerIcon}>▼</span>
+				<span className="job-selector__trigger-label">Job : </span>
+				<span className="job-selector__trigger-value">{JOB_DETAILS[currentJob].name_ja}</span>
+				<span className="job-selector__trigger-icon">▼</span>
 			</button>
 
 			{isOpen && (
 				<>
 					{/* 透明な背景 */}
 					<div
-						className={UI_STYLE.jobSelector.overlay}
+						className="job-selector__overlay"
 						onClick={() => setIsOpen(false)}
 					/>
 
 					{/* ポップアップメニュー */}
 					<div
-						className={UI_STYLE.jobSelector.menu}
+						className="job-selector__menu"
 						onClick={(e) => e.stopPropagation()}
 					>
-						<div className={UI_STYLE.jobSelector.menuHeader}>
+						<div className="job-selector__menu-header">
 							Select Job
 						</div>
 
-						<div className={UI_STYLE.jobSelector.grid}>
+						<div className="job-selector__grid">
 							{JOBS.map((job) => (
 								<button
 									key={job}
 									onClick={() => handleSelect(job)}
-									className={`
-										${UI_STYLE.jobSelector.button}
-										${currentJob === job ? UI_STYLE.jobSelector.active : UI_STYLE.jobSelector.inactive}
-									`}
+									className={getButtonClasses(job)}
 								>
-									<span className={UI_STYLE.jobSelector.buttonDot}>●</span>
+									<span className="job-selector__button-dot">●</span>
 									{JOB_DETAILS[job].name_ja}
 								</button>
 							))}

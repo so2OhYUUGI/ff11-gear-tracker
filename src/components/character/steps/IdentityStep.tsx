@@ -1,6 +1,5 @@
 'use client';
 
-import { UI_STYLE } from '@/lib/styles';
 import { RACES, WORLDS, Race, Gender } from '@/lib/constants/';
 
 interface IdentityStepProps {
@@ -36,17 +35,17 @@ export default function IdentityStep({ formData, onChange, onBack, onSubmit, isS
 	return (
 		<div className="space-y-6">
 			<div>
-				<h3 className={UI_STYLE.mainTitle}>Step 2: キャラクター情報</h3>
-				<p className={UI_STYLE.label}>ヴァナ・ディールでの詳細なアイデンティティ</p>
+				<h3 className="main-title">Step 2: キャラクター情報</h3>
+				<p className="page-description">ヴァナ・ディールでの詳細なアイデンティティ</p>
 			</div>
 
 			<div className="space-y-4">
 				{/* 名前 */}
 				<div>
-					<label className={UI_STYLE.label}>名前</label>
+					<label className="form-label">名前</label>
 					<input
 						type="text"
-						className={UI_STYLE.input + " w-full"}
+						className="form-input"
 						value={formData.name}
 						onChange={(e) => onChange('name', e.target.value)}
 						placeholder="Character Name"
@@ -55,9 +54,9 @@ export default function IdentityStep({ formData, onChange, onBack, onSubmit, isS
 
 				{/* ワールド */}
 				<div>
-					<label className={UI_STYLE.label}>ワールド</label>
+					<label className="form-label">ワールド</label>
 					<select
-						className={UI_STYLE.input + " w-full"}
+						className="form-input"
 						value={formData.world}
 						onChange={(e) => onChange('world', e.target.value)}
 					>
@@ -68,9 +67,9 @@ export default function IdentityStep({ formData, onChange, onBack, onSubmit, isS
 
 				{/* 種族 */}
 				<div>
-					<label className={UI_STYLE.label}>種族</label>
+					<label className="form-label">種族</label>
 					<select
-						className={UI_STYLE.input + " w-full"}
+						className="form-input"
 						value={formData.race}
 						onChange={(e) => handleRaceChange(e.target.value)}
 					>
@@ -81,7 +80,7 @@ export default function IdentityStep({ formData, onChange, onBack, onSubmit, isS
 
 				{/* 性別選択（常に表示し、条件に応じて無効化） */}
 				<div>
-					<label className={UI_STYLE.label}>性別</label>
+					<label className="form-label">性別</label>
 					<div className="flex gap-6 mt-2 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-border">
 						{(['Male', 'Female'] as Gender[]).map(g => {
 							const disabled = isGenderDisabled(g);
@@ -116,11 +115,11 @@ export default function IdentityStep({ formData, onChange, onBack, onSubmit, isS
 			</div>
 
 			<div className="flex gap-3 pt-4">
-				<button onClick={onBack} className={UI_STYLE.buttonSecondary + " flex-1"}>戻る</button>
+				<button onClick={onBack} className="btn btn-secondary-dark flex-1">戻る</button>
 				<button
 					onClick={onSubmit}
 					disabled={isSubmitting || !formData.name || !formData.world || !formData.race || !formData.gender}
-					className={`${UI_STYLE.button} flex-1`}
+					className="btn btn-primary flex-1"
 				>
 					{isSubmitting ? '保存中...' : '登録完了'}
 				</button>

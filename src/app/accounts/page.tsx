@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import AccountList from "@/components/account/AccountList"; // パス変更
-import { UI_STYLE } from "@/lib/styles";
 
 export default async function AccountsPage() {
 	const supabase = await createClient();
@@ -17,13 +16,13 @@ export default async function AccountsPage() {
 		.order("created_at", { ascending: true });
 
 	return (
-		<div className={`${UI_STYLE.container} ${UI_STYLE.pageWrapper}`}>
+		<div className="page-container page-wrapper">
 			<header className="mb-8 flex justify-between items-end">
 				<div>
-					<h1 className={UI_STYLE.mainTitle}>Account Management</h1>
-					<p className={UI_STYLE.label}>上位エンティティ：ゲームアカウントの管理</p>
+					<h1 className="main-title">Account Management</h1>
+					<p className="page-description">上位エンティティ：ゲームアカウントの管理</p>
 				</div>
-				<a href="/" className={UI_STYLE.buttonSecondary}>ポータルへ戻る</a>
+				<a href="/" className="btn-secondary">ポータルへ戻る</a>
 			</header>
 
 			<AccountList initialAccounts={accounts || []} />

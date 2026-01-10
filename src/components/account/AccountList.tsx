@@ -1,8 +1,7 @@
 'use client';
 
-import { UI_STYLE } from "@/lib/styles";
 import { getColorByIndex } from "@/lib/colors";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 export default function AccountList({ initialAccounts }: { initialAccounts: any[] }) {
@@ -25,29 +24,29 @@ export default function AccountList({ initialAccounts }: { initialAccounts: any[
 				return (
 					<div
 						key={acc.id}
-						className={`${UI_STYLE.card} ${UI_STYLE.accountRow.container}`}
+						className="account-row"
 						style={{ borderLeftColor: displayColor }}
 					>
 						{/* 左側：アカウント基本情報 */}
-						<div className={UI_STYLE.accountRow.info}>
+						<div className="account-row__info">
 							<div
-								className={UI_STYLE.accountRow.colorPreview}
+								className="account-row__color-preview"
 								style={{ backgroundColor: displayColor }}
 							>
 								{index + 1}
 							</div>
 							<div>
-								<div className={UI_STYLE.accountRow.name}>{acc.name}</div>
-								<div className={UI_STYLE.accountRow.meta}>
+								<div className="account-row__name">{acc.name}</div>
+								<div className="account-row__meta">
 									ID: {acc.id.split('-')[0]}... (Created: {new Date(acc.created_at).toLocaleDateString()})
 								</div>
 							</div>
 						</div>
 
 						{/* 中央：統計情報（紐付けキャラ数） */}
-						<div className={UI_STYLE.accountRow.stats}>
+						<div className="account-row__stats">
 							<div className="text-center">
-								<div className={UI_STYLE.text.label}>Chars</div>
+								<div className="form-label">Chars</div>
 								<div className="font-black text-xl text-blue-500">
 									{acc.characters?.length || 0}
 								</div>
@@ -55,7 +54,7 @@ export default function AccountList({ initialAccounts }: { initialAccounts: any[
 						</div>
 
 						{/* 右側：操作 */}
-						<div className={UI_STYLE.accountRow.actions}>
+						<div className="account-row__actions">
 							<button
 								onClick={() => handleDelete(acc.id, acc.name)}
 								className="p-2 text-slate-300 hover:text-red-500 transition-colors"
@@ -70,7 +69,7 @@ export default function AccountList({ initialAccounts }: { initialAccounts: any[
 			})}
 
 			{initialAccounts.length === 0 && (
-				<div className={UI_STYLE.modal.empty}>
+				<div className="empty-state">
 					アカウントが登録されていません
 				</div>
 			)}

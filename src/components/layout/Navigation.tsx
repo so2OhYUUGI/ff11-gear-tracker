@@ -1,8 +1,8 @@
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { UI_STYLE } from '@/lib/styles';
 
 const NAV_ITEMS = [
 	{ label: 'Home', href: '/', icon: '🏠' },
@@ -16,22 +16,24 @@ export default function Navigation() {
 
 	const NavItem = ({ item }: { item: typeof NAV_ITEMS[0] }) => {
 		const isActive = pathname === item.href;
+		const itemClasses = `navigation-item ${isActive ? 'navigation-item--active' : 'navigation-item--inactive'}`;
+
 		return (
 			<Link
 				href={item.href}
-				className={`${UI_STYLE.nav.item} ${isActive ? UI_STYLE.nav.itemActive : UI_STYLE.nav.itemInactive}`}
+				className={itemClasses}
 			>
 				<span className="text-xl md:text-lg">{item.icon}</span>
-				<span className={UI_STYLE.nav.label}>{item.label}</span>
+				<span className="navigation-item__label">{item.label}</span>
 			</Link>
 		);
 	};
 
 	return (
 		<>
-			<aside className={UI_STYLE.nav.sidebar}>
+			<aside className="navigation-sidebar">
 				<div className="p-6">
-					<h1 className={UI_STYLE.mainTitle + " text-white"}>FF11 Tracker</h1>
+					<h1 className="main-title text-white">FF11 Tracker</h1>
 				</div>
 				<nav className="flex-1 px-4 space-y-2">
 					{NAV_ITEMS.map((item) => (
@@ -40,7 +42,7 @@ export default function Navigation() {
 				</nav>
 			</aside>
 
-			<nav className={UI_STYLE.nav.bottom}>
+			<nav className="navigation-bottom">
 				{NAV_ITEMS.map((item) => (
 					<NavItem key={item.href} item={item} />
 				))}
