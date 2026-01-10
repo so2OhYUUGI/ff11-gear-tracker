@@ -27,19 +27,19 @@ export default function CharacterCard({ char }: CharacterCardProps) {
   return (
     <button
       onClick={handleCardClick}
-      className="character-card group"
+      className="character-card group w-48 h-48 flex-shrink-0"
       style={{
         borderTopColor: char.accountColor,
       } as React.CSSProperties}
     >
       <div
-        className="character-card__account-badge"
+        className="character-card__account-badge top-2"
         style={{ backgroundColor: char.accountColor }} // Dynamic style: stays inline
       >
         {char.accountName}
       </div>
 
-      <div className="character-card__content">
+      <div className="character-card__content w-full flex flex-col items-center justify-center h-full text-center">
         <div className="character-card__world">{char.world}</div>
         <h4 className="character-card__name">{char.name}</h4>
         <div

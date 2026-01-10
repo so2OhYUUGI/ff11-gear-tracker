@@ -486,4 +486,75 @@
   @apply text-[8px];
   color: hsl(var(--muted-foreground));
 }
+
+  /* ===================================
+   * Gear Edit Modal
+   * =================================== */
+  .modal__overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+    background-color: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+  .modal__content {
+    @apply w-full max-w-md p-6 rounded-2xl shadow-2xl;
+    background-color: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+  }
+  .modal__header {
+    @apply flex items-center justify-between pb-4 border-b;
+    border-color: hsl(var(--border));
+  }
+  .modal__title {
+    @apply text-lg font-bold;
+  }
+  .modal__close-button {
+    @apply w-8 h-8 rounded-full transition-colors;
+  }
+  .modal__close-button:hover {
+    background-color: hsl(var(--accent));
+  }
+  .modal__body {
+    @apply py-4 max-h-[60vh] overflow-y-auto;
+  }
+  .modal__remove-button {
+    @apply w-full py-3 text-center text-sm font-bold border rounded-lg transition-colors;
+    background-color: hsl(var(--secondary));
+    border-color: hsl(var(--border));
+  }
+  .modal__remove-button:hover {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--destructive));
+  }
+  .modal__loading-state, .modal__empty-state {
+    @apply text-center py-10 text-sm;
+    color: hsl(var(--muted-foreground));
+  }
+  .modal__item-button {
+    @apply flex items-center justify-between w-full p-4 rounded-lg transition-colors;
+    background-color: hsl(var(--secondary));
+    border: 1px solid hsl(var(--border));
+  }
+  .modal__item-button:hover {
+    background-color: hsl(var(--accent));
+    border-color: #3b82f6; /* blue-500 */
+  }
+  .modal__item-button--active {
+    @apply text-white;
+    background-color: #2563eb; /* blue-600 */
+    border-color: #2563eb;
+  }
+  .modal__item-button--active:hover {
+    background-color: #1d4ed8; /* blue-700 */
+  }
+  .modal__item-label {
+    @apply font-bold;
+  }
+  .modal__action-text {
+    @apply text-xs font-bold uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+  .modal__item-button--active .modal__action-text {
+    color: white;
+  }
 }

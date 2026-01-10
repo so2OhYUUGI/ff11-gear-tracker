@@ -85,7 +85,7 @@ export default function GearEditModal({
 					<h3 className="modal__title">{category} {slot.name} 選択</h3>
 					<button onClick={onClose} className="modal__close-button">✕</button>
 				</div>
-				<div className="modal__body">
+				<div className="modal__body custom-scrollbar">
 					<button onClick={() => handleSelectItem(null)} className="modal__remove-button">
 						❌ 未取得 / 装備なし (解除)
 					</button>

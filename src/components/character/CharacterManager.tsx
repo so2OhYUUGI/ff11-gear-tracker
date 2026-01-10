@@ -36,13 +36,13 @@ export default function CharacterManager({ groupedCharacters }: CharacterManager
 				<p className="page-description">Select a character to manage their gear.</p>
 			</header>
 
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+			<div className="flex flex-wrap justify-start gap-6">
 				{allCharacters.map((char) => (
 					<CharacterCard key={char.id} char={char} />
 				))}
 
         {/* "Add New" Card */}
-				<Link href="/characters/create" className="character-card character-card--new">
+				<Link href="/characters/create" className="character-card character-card--new w-48 h-48 flex-shrink-0">
 					<span className="text-3xl font-bold">+</span>
 					<span className="form-label mt-1">New Character</span>
 				</Link>
