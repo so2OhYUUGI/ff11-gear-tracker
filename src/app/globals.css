@@ -266,7 +266,6 @@
     @apply flex items-center justify-between mt-2 px-2 py-1 rounded-lg border;
   }
   .gear-tracker__list-section {
-    @apply pt-4;
   }
   .gear-tracker__list-wrapper {
     @apply p-4 shadow-sm rounded-b-2xl border-x border-b;
@@ -425,4 +424,66 @@
       @apply text-sm tracking-normal;
     }
   }
+
+  /* ===================================
+ * Job Selector
+ * =================================== */
+.job-selector {
+  @apply relative inline-block;
+}
+.job-selector__trigger {
+  @apply flex items-center gap-1.5 py-1.5 px-3 rounded-md transition-colors;
+  background-color: hsl(var(--secondary));
+  border: 1px solid hsl(var(--border));
+}
+.job-selector__trigger:hover {
+  background-color: hsl(var(--accent));
+}
+.job-selector__trigger-label {
+  @apply text-xs font-bold;
+  color: hsl(var(--muted-foreground));
+}
+.job-selector__trigger-value {
+  @apply text-sm font-bold;
+  color: hsl(var(--foreground));
+}
+.job-selector__trigger-icon {
+  @apply text-xs ml-1;
+  color: hsl(var(--muted-foreground));
+}
+.job-selector__overlay {
+  @apply fixed inset-0 z-40 bg-black/10;
+}
+.dark .job-selector__overlay {
+  @apply bg-black/40;
+}
+.job-selector__menu {
+  @apply absolute right-0 mt-2 w-64 z-50 p-2 rounded-xl border shadow-lg;
+  background-color: hsl(var(--card));
+  border-color: hsl(var(--border));
+}
+.job-selector__menu-header {
+  @apply px-2 py-1.5 text-xs font-bold uppercase tracking-wider;
+  color: hsl(var(--muted-foreground));
+}
+.job-selector__grid {
+  @apply grid grid-cols-2 gap-1 mt-1;
+}
+.job-selector__button {
+  @apply flex items-center justify-start gap-2 w-full px-3 py-2 rounded-md text-sm font-bold transition-colors;
+}
+.job-selector__button--inactive:hover {
+  background-color: hsl(var(--accent));
+}
+.job-selector__button--active {
+  @apply text-white;
+  background-color: #2563eb; /* blue-600 */
+}
+.job-selector__button--active .job-selector__button-dot {
+  @apply text-white;
+}
+.job-selector__button-dot {
+  @apply text-[8px];
+  color: hsl(var(--muted-foreground));
+}
 }
