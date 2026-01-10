@@ -186,7 +186,7 @@
    * Character Card
    * =================================== */
   .character-card {
-    @apply relative flex flex-col justify-between min-h-[140px] transition-all duration-300 border-t-[8px] border-x border-b;
+    @apply relative flex flex-col justify-between min-h-[140px] p-4 transition-all duration-300 border-t-[8px] border-x border-b rounded-xl text-center;
     background-color: hsl(var(--card));
     border-left-color: hsl(var(--border));
     border-right-color: hsl(var(--border));
@@ -195,21 +195,36 @@
   .character-card:hover {
     @apply shadow-lg;
   }
+  .character-card__content {
+    @apply flex flex-col items-center gap-1;
+  }
+  .character-card__world {
+    @apply font-mono text-xs;
+    color: hsl(var(--muted-foreground));
+  }
   .character-card__name {
-    @apply text-lg font-black leading-tight transition-colors line-clamp-2 break-all;
+    @apply text-xl font-black leading-tight transition-colors line-clamp-2 break-all;
     color: hsl(var(--foreground));
   }
   .group:hover .character-card__name {
     color: #2563eb; /* blue-600 */
   }
   .character-card__job-badge {
-    @apply absolute top-2 right-2 backdrop-blur-sm px-2 py-0.5 rounded border text-[10px] font-black italic shadow-sm z-20;
+    @apply mt-1 backdrop-blur-sm px-2 py-0.5 rounded border text-[10px] font-black italic shadow-sm inline-block;
     background-color: hsl(var(--accent) / 0.9);
     border-color: hsl(var(--border));
     color: hsl(var(--muted-foreground));
+    position: static !important;
   }
   .character-card__account-badge {
-    @apply inline-flex items-center px-2 py-0.5 rounded text-[8px] font-black text-white uppercase tracking-widest mt-2;
+    @apply absolute top-2 left-2 inline-flex items-center px-2 py-0.5 rounded text-[8px] font-black text-white uppercase tracking-widest;
+  }
+  .character-card__select-text {
+    @apply text-[10px] font-bold text-right w-full tracking-tighter opacity-0 transition-all;
+    color: hsl(var(--muted-foreground));
+  }
+  .group:hover .character-card__select-text {
+    @apply opacity-100;
   }
 
   /* ===================================

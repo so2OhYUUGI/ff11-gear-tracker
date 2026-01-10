@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 // Character interface - can be expanded as needed
 interface Character {
@@ -27,15 +27,14 @@ export default function CharacterCard({ char }: CharacterCardProps) {
   return (
     <button
       onClick={handleCardClick}
-      className="character-card text-center"
+      className="character-card group"
       style={{
         borderTopColor: char.accountColor,
-        boxShadow: `0 4px 14px -2px ${char.accountColor}33`,
       } as React.CSSProperties}
     >
       <div
         className="character-card__account-badge"
-        style={{ backgroundColor: char.accountColor }}
+        style={{ backgroundColor: char.accountColor }} // Dynamic style: stays inline
       >
         {char.accountName}
       </div>
@@ -48,9 +47,7 @@ export default function CharacterCard({ char }: CharacterCardProps) {
         </div>
       </div>
 
-      <div className="character-card__footer">
-        <span className="character-card__select-text">SELECT ➔</span>
-      </div>
+      <div className="character-card__select-text">SELECT ➔</div>
     </button>
   );
 }
