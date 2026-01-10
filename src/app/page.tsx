@@ -2,8 +2,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import CharacterManager from "@/components/character/CharacterManager";
-import { UI_STYLE } from "@/lib/styles";
-import { groupCharactersByAccount } from "@/lib/utils"; // 追加
+import { groupCharactersByAccount } from "@/lib/colors"; // 追加
 
 export default async function Home() {
   const supabase = await createClient();
@@ -23,10 +22,10 @@ export default async function Home() {
   const groupedCharacters = groupCharactersByAccount(characters, accounts);
 
   return (
-    <div className={`${UI_STYLE.container} ${UI_STYLE.pageWrapper}`}>
+    <div className="page-container page-wrapper">
       <header className="mb-10">
-        <h1 className={UI_STYLE.mainTitle}>Vana'diel Portal</h1>
-        <p className={UI_STYLE.label}>操作するキャラクターを選択してください</p>
+        <h1 className="main-title">Vana'diel Portal</h1>
+        <p className="page-description">操作するキャラクターを選択してください</p>
       </header>
       <CharacterManager groupedCharacters={groupedCharacters} />
     </div>

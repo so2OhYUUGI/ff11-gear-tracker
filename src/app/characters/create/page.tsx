@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import CharacterWizard from "@/components/character/CharacterWizard";
-import { UI_STYLE } from "@/lib/styles";
 
 export default async function CreateCharacterPage() {
 	const supabase = await createClient();
@@ -16,7 +15,7 @@ export default async function CreateCharacterPage() {
 		.order("created_at", { ascending: true });
 
 	return (
-		<div className={`${UI_STYLE.container} ${UI_STYLE.pageWrapper}`}>
+		<div className="page-container page-wrapper">
 			<div className="max-w-2xl mx-auto">
 				<CharacterWizard accounts={accounts || []} />
 			</div>
