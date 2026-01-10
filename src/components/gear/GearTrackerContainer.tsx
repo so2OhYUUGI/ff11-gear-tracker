@@ -34,7 +34,7 @@ export default function GearTrackerContainer({
 		<div className="page-container page-wrapper">
 			{/* ヘッダーセクション */}
 			<div className="gear-tracker__header">
-				<div className="gear-tracker__session-card" style={{ backgroundColor: accountColor }}>
+				<div className="gear-tracker__session-card flex items-center" style={{ backgroundColor: accountColor }}>
           <div className="gear-tracker__session-card-overlay"></div>
 					<Link href="/" className="gear-tracker__back-button" title="戻る">←</Link>
 					<div className="flex-1 z-10 min-w-0">
