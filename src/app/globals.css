@@ -242,7 +242,7 @@
    * Gear Tracker Page
    * =================================== */
   .gear-tracker__header {
-    @apply sticky top-0 z-20 pt-4 pb-2 bg-background;
+    @apply sticky top-0 z-20 pt-4 pb-2;
   }
   .gear-tracker__session-card {
     @apply relative flex items-center p-4 rounded-xl shadow-lg text-white overflow-hidden;
@@ -263,35 +263,34 @@
     @apply absolute -right-2 -bottom-2 z-0 text-[80px] font-black leading-none select-none text-white/10;
   }
   .gear-tracker__job-selector-bar {
-    @apply flex items-center justify-between mt-2 px-2 py-1 rounded-lg border bg-secondary border-border;
+    @apply flex items-center justify-between mt-2 px-2 py-1 rounded-lg border;
   }
   .gear-tracker__list-section {
     @apply pt-4;
   }
   .gear-tracker__list-wrapper {
-    @apply p-4 shadow-sm rounded-b-2xl border-x border-b bg-card border-border;
+    @apply p-4 shadow-sm rounded-b-2xl border-x border-b;
   }
   .gear-tracker__list-header {
     @apply flex justify-between items-center mb-4 px-1;
   }
   .gear-tracker__syncing-text {
-    @apply text-xs font-bold uppercase tracking-widest animate-pulse text-primary;
+    @apply text-xs font-bold uppercase tracking-widest animate-pulse;
   }
 
   /* ===================================
    * Gear Category Tabs
    * =================================== */
   .gear-tabs {
-    @apply grid grid-cols-5 gap-1 p-1 mt-4 rounded-lg bg-secondary;
+    @apply grid grid-cols-5 gap-1 p-1 mt-4 rounded-lg;
   }
   .gear-tabs__button {
     @apply text-center text-xs font-bold uppercase tracking-tighter py-2 rounded-md transition-all;
   }
   .gear-tabs__button--active {
-    @apply bg-card text-primary shadow-sm;
+    @apply shadow-sm;
   }
   .gear-tabs__button--inactive {
-    @apply text-muted-foreground hover:bg-accent hover:text-accent-foreground;
   }
 
   /* ===================================
