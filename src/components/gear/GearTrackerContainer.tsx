@@ -11,7 +11,7 @@ import { useGearTracker } from './hooks/useGearTracker';
 import JobSelector from './JobSelector';
 import GearSlotList from './GearSlotList';
 import GearEditModal from './GearEditModal';
-import GearCategoryTabs from './GearCategoryTabs'; // Import the unified component
+import GearCategoryTabs from './GearCategoryTabs';
 
 export default function GearTrackerContainer({
 	initialCharacters,
@@ -35,6 +35,7 @@ export default function GearTrackerContainer({
 			{/* ヘッダーセクション */}
 			<div className="gear-tracker__header">
 				<div className="gear-tracker__session-card" style={{ backgroundColor: accountColor }}>
+          <div className="gear-tracker__session-card-overlay"></div>
 					<Link href="/" className="gear-tracker__back-button" title="戻る">←</Link>
 					<div className="flex-1 z-10 min-w-0">
 						<p className="gear-tracker__world-name">{char.world}</p>
@@ -48,18 +49,15 @@ export default function GearTrackerContainer({
 					<JobSelector currentJob={currentJob} onJobChange={handleJobChange} />
 				</div>
 
-        {/* Replace the old tabs with the unified component */}
-        <div className="mt-4">
-				  <GearCategoryTabs activeCategory={activeCategory} onSelect={setActiveCategory} />
-        </div>
+        <GearCategoryTabs activeCategory={activeCategory} onSelect={setActiveCategory} />
 			</div>
 
 			{/* リストセクション */}
 			<div className="gear-tracker__list-section">
 				<div className="gear-tracker__list-wrapper">
-					<div className="flex justify-between items-center mb-4 px-1">
-						<h2 className="section-title">{activeCategory} PROGRESS</h2>
-						{loading && <span className="gear-slot-list__syncing-text">SYNCING...</span>}
+					<div className="gear-tracker__list-header">
+						<h2 className="section-title-text">{activeCategory} PROGRESS</h2>
+						{loading && <span className="gear-tracker__syncing-text">SYNCING...</span>}
 					</div>
 					<GearSlotList
 						key={`${currentJob}-${activeCategory}`}

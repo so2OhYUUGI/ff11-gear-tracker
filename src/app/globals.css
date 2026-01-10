@@ -146,7 +146,7 @@
   }
 
   /* ===================================
-   * Buttons
+   * Buttons & Badges
    * =================================== */
   .btn {
     @apply inline-flex items-center justify-center transition-all active:scale-95 disabled:opacity-50 font-bold tracking-tighter uppercase rounded-md;
@@ -166,6 +166,18 @@
   }
   .btn-secondary:hover {
     background-color: hsl(var(--accent));
+  }
+  .badge {
+    @apply inline-block px-1.5 py-0.5 text-[9px] font-bold rounded;
+  }
+  .badge--info {
+    background-color: #3b82f6; /* blue-500 */
+    color: white;
+  }
+  .badge--secondary {
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+    border: 1px solid hsl(var(--border));
   }
 
   /* ===================================
@@ -214,7 +226,6 @@
     background-color: hsl(var(--accent) / 0.9);
     border-color: hsl(var(--border));
     color: hsl(var(--muted-foreground));
-    position: static !important;
   }
   .character-card__account-badge {
     @apply absolute top-2 left-2 inline-flex items-center px-2 py-0.5 rounded text-[8px] font-black text-white uppercase tracking-widest;
@@ -228,11 +239,70 @@
   }
 
   /* ===================================
+   * Gear Tracker Page
+   * =================================== */
+  .gear-tracker__header {
+    @apply sticky top-0 z-20 pt-4 pb-2 bg-background;
+  }
+  .gear-tracker__session-card {
+    @apply relative flex items-center p-4 rounded-xl shadow-lg text-white overflow-hidden;
+  }
+  .gear-tracker__session-card-overlay {
+    @apply absolute inset-0 w-full h-full bg-gradient-to-r from-black/60 via-black/20 to-transparent;
+  }
+  .gear-tracker__back-button {
+    @apply absolute top-2 left-2 z-20 w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold transition-colors bg-black/20 hover:bg-black/40;
+  }
+  .gear-tracker__world-name {
+    @apply font-mono text-xs opacity-70 uppercase tracking-widest;
+  }
+  .gear-tracker__char-name {
+    @apply text-2xl sm:text-3xl font-black italic leading-none truncate drop-shadow-md;
+  }
+  .gear-tracker__job-decoration {
+    @apply absolute -right-2 -bottom-2 z-0 text-[80px] font-black leading-none select-none text-white/10;
+  }
+  .gear-tracker__job-selector-bar {
+    @apply flex items-center justify-between mt-2 px-2 py-1 rounded-lg border bg-secondary border-border;
+  }
+  .gear-tracker__list-section {
+    @apply pt-4;
+  }
+  .gear-tracker__list-wrapper {
+    @apply p-4 shadow-sm rounded-b-2xl border-x border-b bg-card border-border;
+  }
+  .gear-tracker__list-header {
+    @apply flex justify-between items-center mb-4 px-1;
+  }
+  .gear-tracker__syncing-text {
+    @apply text-xs font-bold uppercase tracking-widest animate-pulse text-primary;
+  }
+
+  /* ===================================
+   * Gear Category Tabs
+   * =================================== */
+  .gear-tabs {
+    @apply grid grid-cols-5 gap-1 p-1 mt-4 rounded-lg bg-secondary;
+  }
+  .gear-tabs__button {
+    @apply text-center text-xs font-bold uppercase tracking-tighter py-2 rounded-md transition-all;
+  }
+  .gear-tabs__button--active {
+    @apply bg-card text-primary shadow-sm;
+  }
+  .gear-tabs__button--inactive {
+    @apply text-muted-foreground hover:bg-accent hover:text-accent-foreground;
+  }
+
+  /* ===================================
    * Gear Slot List & Items
    * =================================== */
-  .gear-list-wrapper {
-    @apply p-4 shadow-sm rounded-b-2xl border-x border-b;
-    background-color: hsl(var(--card));
+  .gear-slot-list {
+    /* This class is a wrapper for the grid, but the styles are applied in gear-tracker__list-wrapper */
+  }
+  .gear-slot-list__grid {
+    @apply grid grid-cols-1 divide-y;
+    border-top-width: 1px;
     border-color: hsl(var(--border));
   }
   .gear-slot {
@@ -243,11 +313,10 @@
       @apply p-4;
     }
   }
-  .gear-slot:hover {
-    border-left-color: #3b82f6; /* blue-500 */
+  .gear-slot--inactive:hover, .gear-slot--active:hover {
+    border-left-color: #3b82f6 !important; /* blue-500 */
   }
   .gear-slot--active {
-    @apply shadow-sm;
     background-color: hsl(var(--card));
     border-left-color: #2563eb; /* blue-600 */
   }
