@@ -16,7 +16,7 @@ export default function Navigation() {
 
 	const NavItem = ({ item }: { item: typeof NAV_ITEMS[0] }) => {
 		const isActive = pathname === item.href;
-		const itemClasses = `navigation-item ${isActive ? 'navigation-item--active' : 'navigation-item--inactive'}`;
+		const itemClasses = `nav-item ${isActive ? 'nav-item--active' : 'nav-item--inactive'}`;
 
 		return (
 			<Link
@@ -24,14 +24,14 @@ export default function Navigation() {
 				className={itemClasses}
 			>
 				<span className="text-xl md:text-lg">{item.icon}</span>
-				<span className="navigation-item__label">{item.label}</span>
+				<span className="nav-item__label">{item.label}</span>
 			</Link>
 		);
 	};
 
 	return (
 		<>
-			<aside className="navigation-sidebar">
+			<aside className="nav-sidebar">
 				<div className="p-6">
 					<h1 className="main-title text-white">FF11 Tracker</h1>
 				</div>
@@ -42,7 +42,7 @@ export default function Navigation() {
 				</nav>
 			</aside>
 
-			<nav className="navigation-bottom">
+			<nav className="nav-bottom">
 				{NAV_ITEMS.map((item) => (
 					<NavItem key={item.href} item={item} />
 				))}

@@ -25,15 +25,15 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 224 71.4% 4.1%; /* slate-950 */
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    --card: 222.2 84% 4.9%; /* slate-900 */
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+    --popover: 224 71.4% 4.1%;
     --popover-foreground: 210 40% 98%;
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 217.2 32.6% 17.5%; /* slate-800 */
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
@@ -41,351 +41,305 @@
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
+    --border: 217.2 32.6% 17.5%; /* slate-800 */
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
   }
 }
-
-/* ===================================
-   プロジェクト固有の基本スタイル
-   =================================== */
 
 @layer base {
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
 }
 
-/* ===================================
-   再利用可能なコンポーネントクラス
-   =================================== */
-
 @layer components {
-
-  /* -----------------------------------
-   * ページ全体・レイアウト関連
-   * ----------------------------------- */
-
+  /* ===================================
+   * Global Layout
+   * =================================== */
   .page-container {
     @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
   }
-
   .page-wrapper {
-    @apply pt-8 pb-24 md:pb-10;
-  }
-  
-  .section-title {
-    @apply text-xs font-black uppercase tracking-widest text-muted-foreground ml-1;
+    @apply pt-0 pb-24 md:pb-10;
   }
 
-  .page-description {
-    @apply text-muted-foreground mt-2;
+  /* ===================================
+   * App Shell
+   * =================================== */
+  .app-shell__wrapper {
+    @apply flex h-screen w-full overflow-hidden;
+    background-color: hsl(var(--background));
+  }
+  .app-shell__main {
+    @apply flex flex-col flex-1 min-w-0 h-full relative;
+  }
+  .app-shell__content {
+    @apply flex-1 overflow-y-auto relative z-0;
   }
 
-  .main-title {
-    @apply text-3xl font-black italic tracking-tighter text-primary;
-  }
-
-  /* -----------------------------------
-   * ヘッダー
-   * ----------------------------------- */
-
+  /* ===================================
+   * App Header
+   * =================================== */
   .app-header {
-    @apply sticky top-0 z-40 w-full bg-background border-b border-border/60;
+    @apply sticky top-0 z-40 w-full border-b;
+    background-color: hsl(var(--background));
+    border-color: hsl(var(--border) / 0.6);
   }
-
   .app-header__inner {
     @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between;
   }
-
   .app-header__logo {
-    @apply text-lg font-black italic tracking-tighter text-blue-600;
+    @apply text-lg font-black italic tracking-tighter;
+    color: #2563eb; /* blue-600 */
   }
-
   .app-header__logout {
-    @apply text-xs font-black text-slate-500 hover:text-red-500 transition-colors py-1 px-3 border border-slate-200 dark:border-slate-700 rounded-full bg-white dark:bg-slate-800;
+    @apply text-[10px] font-black py-1 px-3 border rounded-full transition-colors;
+    background-color: hsl(var(--card));
+    border-color: hsl(var(--border));
+    color: hsl(var(--muted-foreground));
+  }
+  .app-header__logout:hover {
+    color: hsl(var(--destructive));
   }
 
-  /* -----------------------------------
-   * ナビゲーション
-   * ----------------------------------- */
-
-  .main-nav {
-    @apply fixed bottom-0 left-0 right-0 z-50 h-16 border-t border-border/60 bg-background/95 backdrop-blur-sm md:relative md:h-auto md:border-none md:bg-transparent md:backdrop-blur-none;
+  /* ===================================
+   * Typography
+   * =================================== */
+  .main-title {
+    @apply text-2xl font-black italic tracking-tighter uppercase;
+    color: hsl(var(--primary));
   }
-
-  .main-nav__list {
-    @apply grid h-full grid-cols-4 items-center md:flex md:space-x-4;
+  .page-description {
+    color: hsl(var(--muted-foreground));
   }
-
-  .main-nav__item {
-    @apply text-center;
+  .section {
+    @apply space-y-4;
   }
-
-  .main-nav__link {
-    @apply flex flex-col items-center justify-center space-y-1 text-muted-foreground transition-colors hover:text-primary;
+  .section-title-text {
+    @apply text-[10px] font-black uppercase tracking-widest ml-1;
+    color: hsl(var(--muted-foreground));
   }
-
-  .main-nav__link--active {
-    @apply text-primary;
-  }
-
-  .main-nav__icon {
-    @apply h-6 w-6;
-  }
-
-  .main-nav__text {
-    @apply text-xs font-bold;
-  }
-
-  /* -----------------------------------
-   * ギアトラッカーページ
-   * ----------------------------------- */
-
-  .gear-tracker__header {
-    @apply sticky top-0 z-30 bg-background/95 backdrop-blur pt-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 border-b border-border/40 pb-4 overflow-visible;
-  }
-
-  .gear-tracker__session-card {
-    @apply flex items-center justify-between text-white p-4 rounded-xl shadow-lg relative overflow-hidden;
-  }
-
-  .gear-tracker__back-button {
-    @apply h-9 w-9 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center font-bold shadow-sm transition-all active:scale-95 shrink-0 z-10 mr-4;
-  }
-
-  .gear-tracker__world-name {
-    @apply text-sm font-bold opacity-80;
-  }
-
-  .gear-tracker__char-name {
-    @apply text-2xl font-black tracking-tight leading-none truncate;
-  }
-
-  .gear-tracker__job-decoration {
-    @apply absolute right-4 bottom-0 text-7xl font-black italic opacity-10 select-none text-white tracking-tighter pointer-events-none;
-  }
-
-  .gear-tracker__job-selector-bar {
-    @apply flex items-center justify-between w-full bg-muted/40 p-2 rounded-lg border border-border/60 mt-4;
-  }
-
-  .gear-tracker__list-section {
-    @apply relative z-10;
-  }
-
-  .gear-tracker__list-wrapper {
-    @apply bg-card border-x border-b border-border rounded-b-2xl p-4 shadow-sm;
-  }
-
-  /* -----------------------------------
-   * ジョブセレクター
-   * ----------------------------------- */
-
-  .job-selector__trigger {
-    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2;
-  }
-
-  .job-selector__popover-content {
-    @apply z-50 w-[320px] p-0;
-  }
-
-  .job-selector__grid {
-    @apply grid grid-cols-4 gap-1 p-2;
-  }
-
-  .job-selector__job-button {
-    @apply flex flex-col items-center justify-center gap-1.5 rounded-lg p-2 text-center text-xs font-medium transition-colors hover:bg-muted/80;
-  }
-
-  .job-selector__job-button--active {
-    @apply bg-primary/10 text-primary;
-  }
-
-  .job-selector__job-icon {
-    @apply h-8 w-8 object-contain;
-  }
-
-  /* ----------------------------------
-   * ギアカテゴリタブ
-   * ----------------------------------- */
-
-  .gear-category-tabs__list {
-    @apply inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground;
-  }
-
-  .gear-category-tabs__trigger {
-    @apply inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
-  }
-
-  .gear-category-tabs__trigger--active {
-    @apply bg-background text-foreground shadow-sm;
-  }
-
-  /* -----------------------------------
-   * 装備スロットリスト
-   * ----------------------------------- */
-
-  .gear-slot-list {
-    @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4;
-  }
-
-  .gear-slot-list__syncing-text {
-    @apply text-xs font-mono animate-pulse text-primary/70;
-  }
-
-  .gear-slot-card {
-    @apply bg-card rounded-xl p-3 shadow-sm border-2 transition-all;
-  }
-
-  .gear-slot-card--equipped {
-    @apply border-primary/50 ring-1 ring-primary/20 shadow-lg;
-  }
-
-  .gear-slot-card--unequipped {
-    @apply border-border/80 opacity-90;
-  }
-
-  .gear-slot-card__header {
-    @apply flex justify-between items-start;
-  }
-
-  .gear-slot-card__slot-name {
-    @apply text-xs font-black uppercase tracking-tight text-foreground truncate;
-  }
-
-  .gear-slot-card__tier {
-    @apply text-2xl font-black tracking-tighter text-foreground;
-  }
-
-  .gear-slot-card__item-name {
-    @apply text-xs text-muted-foreground mt-1 truncate;
-  }
-
-  .gear-slot-card__progress-text {
-    @apply font-mono text-xs font-bold text-foreground mt-2;
-  }
-
-  /* -----------------------------------
-   * キャラクターカード
-   * ----------------------------------- */
-
-  .character-card {
-    @apply bg-card rounded-xl shadow-sm border border-border p-4 cursor-pointer transition-all hover:shadow-md hover:border-primary/50 relative overflow-hidden border-t-4;
-  }
-
-  .character-card__account-badge {
-    @apply absolute top-2 right-2 px-2 py-0.5 rounded text-white text-xs font-bold uppercase;
-  }
-
-  .character-card__content {
-    @apply pt-5;
-  }
-
-  .character-card__world {
-    @apply text-xs text-muted-foreground;
-  }
-
-  .character-card__name {
-    @apply text-xl font-bold text-foreground mt-1 truncate;
-  }
-
-  .character-card__job-badge {
-    @apply inline-block bg-muted text-muted-foreground text-xs font-mono px-2 py-1 rounded mt-3;
-  }
-
-  .character-card__footer {
-    @apply mt-4 pt-3 border-t border-border/50 text-right;
-  }
-
-  .character-card__select-text {
-    @apply text-primary font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity;
-  }
-
-  .character-card--new {
-    @apply border-dashed border-2 border-border/80 bg-transparent hover:bg-muted/50 flex flex-col items-center justify-center text-muted-foreground;
-  }
-
-  /* -----------------------------------
-   * アカウントリスト
-   * ----------------------------------- */
-  .account-row {
-    @apply bg-card flex items-center justify-between gap-4 p-4 border-l-4;
-  }
-
-  .account-row__info {
-    @apply flex items-center gap-4 flex-1;
-  }
-
-  .account-row__color-preview {
-    @apply w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-lg shadow-inner;
-  }
-
-  .account-row__name {
-    @apply font-bold text-lg text-foreground;
-  }
-
-  .account-row__meta {
-    @apply text-xs text-muted-foreground;
-  }
-
-  .account-row__stats {
-    @apply flex items-center gap-4;
-  }
-
-  .account-row__actions {
-    @apply flex items-center gap-2;
-  }
-
-  /* -----------------------------------
-   * 汎用コンポーネント
-   * ----------------------------------- */
-
-  .card {
-    @apply bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4;
-  }
-
-  .empty-state {
-    @apply text-center p-8 text-muted-foreground border-2 border-dashed rounded-lg;
-  }
-
-  /* -----------------------------------
-   * 汎用フォーム要素
-   * ----------------------------------- */
-
-  .btn {
-    @apply inline-flex items-center justify-center px-4 py-2 transition-all active:scale-95 disabled:opacity-50 font-bold tracking-tighter uppercase rounded-md shadow-sm;
-  }
-
-  .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white;
-  }
-
-  /* Light BG Secondary Button */
-  .btn-secondary {
-     @apply bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200;
-  }
-
-  /* Dark BG Secondary Button */
-  .btn-secondary-dark {
-    @apply bg-slate-600 hover:bg-slate-700 text-white;
-  }
-
-  .form-input {
-    @apply w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm font-bold;
-  }
-
   .form-label {
-    @apply text-xs font-bold uppercase text-muted-foreground tracking-tighter block;
+    @apply text-[9px] font-bold uppercase tracking-tighter block;
+    color: hsl(var(--muted-foreground));
+  }
+  .text-tiny {
+    @apply text-[8px] font-medium uppercase;
+  }
+  .text-mono {
+    @apply font-mono text-[10px];
   }
 
-  /* -----------------------------------
-   * 汎用テキストスタイル
-   * ----------------------------------- */
+  /* ===================================
+   * Buttons
+   * =================================== */
+  .btn {
+    @apply inline-flex items-center justify-center transition-all active:scale-95 disabled:opacity-50 font-bold tracking-tighter uppercase rounded-md;
+  }
+  .btn-primary {
+    @apply text-white shadow-sm;
+    background-color: #2563eb; /* blue-600 */
+  }
+  .btn-primary:hover {
+    background-color: #1d4ed8; /* blue-700 */
+  }
+  .btn-secondary {
+    @apply border;
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+    border-color: hsl(var(--border));
+  }
+  .btn-secondary:hover {
+    background-color: hsl(var(--accent));
+  }
 
-  .text-tiny {
-    @apply text-xs font-medium uppercase;
+  /* ===================================
+   * Forms
+   * =================================== */
+  .form-input {
+    @apply w-full px-3 py-2 border rounded-lg text-sm font-bold transition-all;
+    background-color: hsl(var(--card));
+    color: hsl(var(--foreground));
+    border-color: hsl(var(--border));
+  }
+  .form-input:focus {
+    @apply outline-none ring-2;
+    --tw-ring-color: #3b82f6; /* blue-500 */
+  }
+
+  /* ===================================
+   * Character Card
+   * =================================== */
+  .character-card {
+    @apply relative flex flex-col justify-between min-h-[140px] transition-all duration-300 border-t-[8px] border-x border-b;
+    background-color: hsl(var(--card));
+    border-left-color: hsl(var(--border));
+    border-right-color: hsl(var(--border));
+    border-bottom-color: hsl(var(--border));
+  }
+  .character-card:hover {
+    @apply shadow-lg;
+  }
+  .character-card__name {
+    @apply text-lg font-black leading-tight transition-colors line-clamp-2 break-all;
+    color: hsl(var(--foreground));
+  }
+  .group:hover .character-card__name {
+    color: #2563eb; /* blue-600 */
+  }
+  .character-card__job-badge {
+    @apply absolute top-2 right-2 backdrop-blur-sm px-2 py-0.5 rounded border text-[10px] font-black italic shadow-sm z-20;
+    background-color: hsl(var(--accent) / 0.9);
+    border-color: hsl(var(--border));
+    color: hsl(var(--muted-foreground));
+  }
+  .character-card__account-badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-[8px] font-black text-white uppercase tracking-widest mt-2;
+  }
+
+  /* ===================================
+   * Gear Slot List & Items
+   * =================================== */
+  .gear-list-wrapper {
+    @apply p-4 shadow-sm rounded-b-2xl border-x border-b;
+    background-color: hsl(var(--card));
+    border-color: hsl(var(--border));
+  }
+  .gear-slot {
+    @apply flex items-center p-3 transition-all border-l-4 cursor-pointer;
+  }
+  @screen sm {
+    .gear-slot {
+      @apply p-4;
+    }
+  }
+  .gear-slot:hover {
+    border-left-color: #3b82f6; /* blue-500 */
+  }
+  .gear-slot--active {
+    @apply shadow-sm;
+    background-color: hsl(var(--card));
+    border-left-color: #2563eb; /* blue-600 */
+  }
+  .gear-slot--inactive {
+    @apply opacity-80;
+    border-left-color: hsl(var(--border));
+  }
+  .gear-slot__icon-wrapper {
+    @apply w-10 h-10 flex flex-col items-center justify-center rounded border mr-4 shrink-0 transition-colors;
+    background-color: hsl(var(--secondary));
+    border-color: hsl(var(--border));
+  }
+  @screen sm {
+    .gear-slot__icon-wrapper {
+      @apply w-12 h-12;
+    }
+  }
+  .group:hover .gear-slot__icon-wrapper {
+    background-color: #eff6ff; /* blue-50 */
+  }
+  .dark .group:hover .gear-slot__icon-wrapper {
+    background-color: rgba(30, 58, 138, 0.2); /* blue-900/20 */
+  }
+  .gear-slot__icon-text {
+    @apply text-[8px] font-black uppercase tracking-tighter mt-0.5;
+    color: hsl(var(--muted-foreground));
+  }
+  .gear-slot__details {
+    @apply flex-grow min-w-0;
+  }
+  .gear-slot__name {
+    @apply font-bold mb-1 truncate;
+    color: hsl(var(--foreground));
+  }
+  .gear-slot__empty-text {
+    @apply text-xs italic py-2;
+    color: hsl(var(--muted-foreground));
+  }
+  .gear-slot__arrow {
+    @apply ml-2 opacity-30 transition-all;
+    color: hsl(var(--muted-foreground));
+  }
+  .group:hover .gear-slot__arrow {
+    @apply opacity-100 translate-x-1;
+  }
+
+  /* ===================================
+   * Navigation
+   * =================================== */
+  .nav-sidebar {
+    @apply w-64 flex-col border-r shrink-0;
+    background-color: #020617; /* slate-900 */
+    color: #d1d5db; /* slate-300 */
+    border-color: #1e293b; /* slate-800 */
+    display: none;
+  }
+  @screen md {
+    .nav-sidebar {
+      display: flex;
+    }
+  }
+
+  .nav-bottom {
+    @apply fixed bottom-0 left-0 right-0 justify-around items-center h-16 px-2 z-[100] border-t;
+    background-color: hsl(var(--background));
+    border-color: hsl(var(--border));
+    display: flex;
+  }
+  @screen md {
+    .nav-bottom {
+      display: none;
+    }
+  }
+
+  .nav-item {
+    @apply flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors;
+    min-width: 64px;
+  }
+  @screen md {
+    .nav-item {
+      @apply flex-row gap-3 px-4 py-3;
+    }
+  }
+
+  .nav-item--active {
+    background-color: #2563eb; /* blue-600 */
+    color: #ffffff;
+  }
+
+  .nav-item--inactive {
+    color: #64748b; /* slate-500 */
+  }
+  @screen md {
+    .nav-item--inactive {
+      color: #94a3b8; /* slate-400 */
+    }
+  }
+  .nav-item--inactive:hover {
+    background-color: hsl(var(--accent));
+  }
+  
+  .nav-item__label {
+    @apply text-[10px] font-bold uppercase tracking-tighter;
+  }
+  @screen md {
+    .nav-item__label {
+      @apply text-sm tracking-normal;
+    }
   }
 }
