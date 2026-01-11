@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -20,11 +19,11 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={`${inter.className} antialiased`}>
-        <div className="app-shell-wrapper">
+        <div className="app-shell__wrapper">
           <Navigation />
-          <div className="app-shell-main">
+          <div className="app-shell__main">
             <AppHeader />
-            <main className="app-shell-content">
+            <main className="app-shell__content pb-20 md:pb-6">
               {children}
             </main>
           </div>

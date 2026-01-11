@@ -42,7 +42,7 @@ export default function CharacterManager({ groupedCharacters }: CharacterManager
 				))}
 
         {/* "Add New" Card */}
-				<Link href="/characters/create" className="character-card character-card--new w-48 h-48 flex-shrink-0">
+				<Link href="/characters/create" className="character-card character-card--new w-48 h-48 shrink-0">
 					<span className="text-3xl font-bold">+</span>
 					<span className="form-label mt-1">New Character</span>
 				</Link>

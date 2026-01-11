@@ -27,7 +27,7 @@ export default function CharacterCard({ char }: CharacterCardProps) {
   return (
     <button
       onClick={handleCardClick}
-      className="character-card group w-48 h-48 flex-shrink-0"
+      className="character-card group w-48 h-48 shrink-0"
       style={{
         borderTopColor: char.accountColor,
       } as React.CSSProperties}

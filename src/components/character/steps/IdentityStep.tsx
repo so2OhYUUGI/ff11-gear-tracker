@@ -1,6 +1,7 @@
 'use client';
 
-import { RACES, WORLDS, Race, Gender } from '@/lib/constants/';
+import { RACES, WORLDS } from '@/lib/constants/';
+import type { Gender } from '@/lib/types';
 
 interface IdentityStepProps {
 	formData: { name: string; world: string; race: string; gender: string };
