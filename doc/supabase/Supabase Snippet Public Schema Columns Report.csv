@@ -1,0 +1,74 @@
+table_name,column_name,data_type,is_nullable,column_default
+character_gears,id,uuid,NO,gen_random_uuid()
+character_gears,character_id,uuid,YES,null
+character_gears,job_code,text,NO,null
+character_gears,slot,USER-DEFINED,NO,null
+character_gears,item_id,text,YES,null
+character_gears,status,text,YES,'owned'::text
+character_gears,updated_at,timestamp with time zone,YES,now()
+character_gears,category,text,YES,null
+characters,id,uuid,NO,gen_random_uuid()
+characters,user_id,uuid,NO,null
+characters,name,text,NO,null
+characters,world,text,NO,null
+characters,account_label,text,YES,null
+characters,race,text,YES,null
+characters,gender,text,YES,null
+characters,created_at,timestamp with time zone,NO,"timezone('utc'::text, now())"
+characters,updated_at,timestamp with time zone,NO,"timezone('utc'::text, now())"
+characters,game_account_id,uuid,YES,null
+characters,last_job_code,text,YES,'WAR'::text
+game_accounts,id,uuid,NO,gen_random_uuid()
+game_accounts,user_id,uuid,NO,null
+game_accounts,name,text,NO,null
+game_accounts,created_at,timestamp with time zone,NO,now()
+game_accounts,color_code,text,YES,null
+gear_progression,id,uuid,NO,gen_random_uuid()
+gear_progression,character_id,uuid,NO,null
+gear_progression,group_name,text,NO,null
+gear_progression,job_code,text,YES,null
+gear_progression,slot,text,NO,null
+gear_progression,current_item_id,integer,YES,null
+gear_progression,updated_at,timestamp with time zone,NO,"timezone('utc'::text, now())"
+inventories,id,uuid,NO,gen_random_uuid()
+inventories,character_id,uuid,NO,null
+inventories,item_id,text,NO,null
+inventories,quantity,integer,NO,0
+inventories,location,text,NO,'inventory'::text
+inventories,updated_at,timestamp with time zone,NO,"timezone('utc'::text, now())"
+items,id,text,NO,null
+items,name,text,NO,null
+items,category,text,NO,null
+items,created_at,timestamp with time zone,NO,"timezone('utc'::text, now())"
+items,name_ja,text,YES,null
+items,slot,USER-DEFINED,YES,null
+items,tier,integer,YES,0
+items,jobs,ARRAY,YES,'{}'::text[]
+items,base_stats,jsonb,YES,'{}'::jsonb
+profiles,id,uuid,NO,null
+profiles,username,text,YES,null
+profiles,avatar_url,text,YES,null
+recipe_groups,id,text,NO,null
+recipe_groups,name,text,NO,null
+recipe_groups,category,text,YES,null
+recipe_groups,description,text,YES,null
+recipe_requirements,id,integer,NO,null
+recipe_requirements,group_id,text,NO,null
+recipe_requirements,item_id,text,NO,null
+recipe_requirements,quantity,integer,NO,null
+recipe_requirements,step_name,text,YES,null
+recipes,id,integer,NO,null
+recipes,result_item_id,text,NO,null
+recipes,recipe_type,text,YES,'upgrade'::text
+recipes,base_item_id,text,YES,null
+recipes,material_item_id,text,NO,null
+recipes,quantity,integer,YES,1
+recipes,acquisition_note,text,YES,null
+user_targets,id,uuid,NO,gen_random_uuid()
+user_targets,user_id,uuid,NO,null
+user_targets,character_id,uuid,NO,null
+user_targets,group_id,text,NO,null
+user_targets,status,text,YES,'in_progress'::text
+user_targets,created_at,timestamp with time zone,NO,"timezone('utc'::text, now())"
+user_targets,priority,integer,YES,1
+user_targets,user_note,text,YES,null
