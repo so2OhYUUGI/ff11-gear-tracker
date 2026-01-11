@@ -66,8 +66,11 @@ export async function requestPasswordReset(formData: FormData) {
       throw new Error("致命的エラー: NEXT_PUBLIC_SITE_URL環境変数が設定されていません。");
     }
 
+    // redirectToを、セッションを確立するコールバック経由に変更
+    const redirectTo = `${siteUrl}/auth/callback?next=/reset-password`;
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${siteUrl}/reset-password`,
+      redirectTo: redirectTo,
     });
 
     if (error) {
