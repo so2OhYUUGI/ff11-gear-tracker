@@ -88,11 +88,14 @@ def main():
         
         def find_attr(key, is_str=False):
             if is_str:
+                # 文字列は key="value"
                 parts = block.split(f'{key}="')
                 return parts[1].split('"')[0] if len(parts) > 1 else ""
             else:
+                # 数値は \bkey=数字 にマッチさせる（item_levelとlevelを区別）
+                # \b は単語の境界を意味するので、item_level の level には反応しなくなります
                 import re
-                match = re.search(f'{key}=(\d+)', block)
+                match = re.search(r'\b' + re.escape(key) + r'=(\d+)', block)
                 return int(match.group(1)) if match else 0
 
         item_id = find_attr("id")
@@ -101,7 +104,8 @@ def main():
         job_bits = find_attr("jobs")
         slot = find_attr("slots")
         cat = find_attr("category", True)
-        i_level = find_attr("i_level")
+        level = find_attr("level")
+        i_level = find_attr("item_level")
 
         if cat == "Armor" and slot in ARMOR_SLOTS:
             for job_code, master in JOB_MASTER.items():
@@ -112,8 +116,8 @@ def main():
                         "ja": name_ja,
                         "en": name_en,
                         "slot": slot,
-                        "level": find_attr("level"),
-                        "i_level": i_level,
+                        "level": level,
+                        "item_level": i_level,
                         "description_ja": d["ja"],
                         "description_en": d["en"]
                     })
