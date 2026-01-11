@@ -19,7 +19,7 @@ export default function LoginPage() {
 
   return (
     <div className="page-container flex min-h-screen flex-col items-center justify-center">
-      <div className="card w-full max-w-md p-8 bg-slate-900/80">
+      <div className="card w-full max-w-md p-8 bg-cyan-800/80">
         {view === 'forgot-password' ? (
           <ForgotPasswordForm onBackToLogin={showLogin} />
         ) : (

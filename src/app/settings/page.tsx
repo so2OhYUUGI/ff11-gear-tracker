@@ -70,7 +70,7 @@ export default function SettingsPage() {
         <p className="page-description">アプリとデータの管理</p>
       </header>
 
-      <div className="grid gap-4">
+      <div className="grid gap-4 ">
         {/* ゲームアカウント管理へのリンク */}
         <Link href="/accounts" className="card flex items-center justify-between hover:border-blue-500 transition-colors group">
           <div>
