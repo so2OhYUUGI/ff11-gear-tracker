@@ -25,7 +25,6 @@ npm install
 ### 2. 環境変数の設定
 
 プロジェクトのルートに `.env.local` ファイルを作成し、Supabaseプロジェクトの情報を追記します。
-これらの値は、Supabaseプロジェクト管理画面の `Settings` > `API` から取得できます。
 
 ```.env.local
 NEXT_PUBLIC_SUPABASE_URL=YOUR_SUPABASE_URL
@@ -34,32 +33,16 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
 
 ### 3. データベースのセットアップ
 
-このプロジェクトは `supabase/schema.sql` にデータベースの完全なスキーマ（テーブル定義や制約）が記述されています。
-Supabaseをローカル環境で開発する場合や、新しいSupabaseプロジェクトに適用する際は、このSQLファイルを使ってデータベースを構築してください。
+`supabase/schema.sql` がデータベースの完全なスキーマです。Supabaseプロジェクトにこのスキーマを適用してください。（Supabase CLIまたはWebダッシュボード経由）
 
-**Supabase CLIを使用する場合 (推奨):**
+### 4. 管理者 (Admin) の設定
 
-Supabase CLIがインストールされていれば、以下のコマンドでスキーマを適用できます。
+アイテムマスターの編集など、一部の機能は管理者権限を持つユーザーのみが利用できます。
+開発環境で管理者ユーザーをセットアップするには、`DEVELOPMENT_LOG.md` の「**管理者 (Admin) ロールのセットアップ**」セクションを参照してください。
 
-```bash
-# プロジェクトにSupabaseを連携
-supabase link --project-ref <your-project-id>
-
-# ローカルDBの変更をスキーマファイルに反映させる前にリセット（任意）
-supabase db reset
-
-# リモート（本番）DBにローカルのスキーマを反映
-supabase db push
-```
-
-**Supabaseダッシュボードを使用する場合:**
-
-1. Supabaseプロジェクトの `SQL Editor` を開きます。
-2. `supabase/schema.sql` の内容をコピー＆ペーストします。
-3. クエリを実行します。
 
 ## 📝 AIアシスタントとの連携
 
 このプロジェクトはAIアシスタント（Google Gemini）との共同作業を前提としています。
-AIと開発を始める際は、**まず `DEVELOPMENT_LOG.md` を読み込ませてください`**。
+開発を始める際は、**まず `DEVELOPMENT_LOG.md` を読み込ませてください`**。
 このファイルには、AIがプロジェクトを正しく理解し、適切にサポートするための重要な指示がすべて記載されています。

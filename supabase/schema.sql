@@ -139,6 +139,13 @@ CREATE TABLE public.gear_progression (
     updated_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
+CREATE TABLE public.user_roles (
+    id uuid NOT NULL DEFAULT gen_random_uuid(),
+    user_id uuid NOT NULL,
+    role text NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT now()
+);
+
 --
 -- Add constraints
 --
@@ -155,11 +162,14 @@ ALTER TABLE public.recipes ADD CONSTRAINT recipes_pkey PRIMARY KEY (id);
 ALTER TABLE public.recipe_requirements ADD CONSTRAINT recipe_requirements_pkey PRIMARY KEY (id);
 ALTER TABLE public.user_targets ADD CONSTRAINT user_targets_pkey PRIMARY KEY (id);
 ALTER TABLE public.gear_progression ADD CONSTRAINT gear_progression_pkey PRIMARY KEY (id);
+ALTER TABLE public.user_roles ADD CONSTRAINT user_roles_pkey PRIMARY KEY (id);
 
 -- Unique Constraints
 ALTER TABLE public.character_gears ADD CONSTRAINT character_gears_upsert_key UNIQUE (character_id, job_code, category, slot);
 ALTER TABLE public.inventories ADD CONSTRAINT inventories_character_id_item_id_location_key UNIQUE (character_id, item_id, location);
 ALTER TABLE public.user_targets ADD CONSTRAINT user_targets_character_id_group_id_key UNIQUE (character_id, group_id);
+ALTER TABLE public.user_roles ADD CONSTRAINT user_roles_user_id_role_key UNIQUE (user_id, role);
+
 
 -- Foreign Keys
 ALTER TABLE public.game_accounts ADD CONSTRAINT game_accounts_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id);
@@ -185,3 +195,5 @@ ALTER TABLE public.recipe_requirements ADD CONSTRAINT recipe_requirements_item_i
 ALTER TABLE public.user_targets ADD CONSTRAINT user_targets_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id);
 ALTER TABLE public.user_targets ADD CONSTRAINT user_targets_character_id_fkey FOREIGN KEY (character_id) REFERENCES public.characters(id) ON DELETE CASCADE;
 ALTER TABLE public.user_targets ADD CONSTRAINT user_targets_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.recipe_groups(id);
+
+ALTER TABLE public.user_roles ADD CONSTRAINT user_roles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
