@@ -34,14 +34,23 @@ CREATE TABLE public.game_accounts (
 
 CREATE TABLE public.items (
     id text NOT NULL,
-    name text NOT NULL,
     category text NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+    
+    name_en text,
     name_ja text,
+
+    description_en text,
+    description_ja text,
+    
     slot public.gear_slot,
-    tier integer DEFAULT 0,
-    jobs text[] DEFAULT '{}'::text[],
-    base_stats jsonb DEFAULT '{}'::jsonb
+    jobs text[],
+    
+    equip_level integer DEFAULT 0,
+    item_level integer DEFAULT 0,
+
+    base_stats jsonb,
+
+    created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
 CREATE TABLE public.characters (
@@ -176,4 +185,3 @@ ALTER TABLE public.recipe_requirements ADD CONSTRAINT recipe_requirements_item_i
 ALTER TABLE public.user_targets ADD CONSTRAINT user_targets_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id);
 ALTER TABLE public.user_targets ADD CONSTRAINT user_targets_character_id_fkey FOREIGN KEY (character_id) REFERENCES public.characters(id) ON DELETE CASCADE;
 ALTER TABLE public.user_targets ADD CONSTRAINT user_targets_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.recipe_groups(id);
-

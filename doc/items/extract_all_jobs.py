@@ -101,6 +101,7 @@ def main():
         job_bits = find_attr("jobs")
         slot = find_attr("slots")
         cat = find_attr("category", True)
+        i_level = find_attr("i_level")
 
         if cat == "Armor" and slot in ARMOR_SLOTS:
             for job_code, master in JOB_MASTER.items():
@@ -112,6 +113,7 @@ def main():
                         "en": name_en,
                         "slot": slot,
                         "level": find_attr("level"),
+                        "i_level": i_level,
                         "description_ja": d["ja"],
                         "description_en": d["en"]
                     })
