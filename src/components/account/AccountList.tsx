@@ -38,7 +38,7 @@ export default function AccountList({ initialAccounts }: { initialAccounts: any[
 							<div>
 								<div className="account-row__name">{acc.name}</div>
 								<div className="account-row__meta">
-									ID: {acc.id.split('-')[0]}... (Created: {new Date(acc.created_at).toLocaleDateString()})
+									ID: {acc.id.split('-')[0]}... (Created: {new Date(acc.created_at).toLocaleDateString('ja-JP')})
 								</div>
 							</div>
 						</div>
