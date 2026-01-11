@@ -53,6 +53,27 @@ export async function signup(formData: FormData) {
 }
 
 /**
+ * パスワードリセットのリクエスト
+ */
+export async function requestPasswordReset(formData: FormData) {
+  const email = formData.get('email') as string;
+  const supabase = await createClient();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    // リセット後にリダイレクトする先のURL
+    redirectTo: `${siteUrl}/reset-password`,
+  });
+
+  if (error) {
+    return redirect('/login?view=forgot-password&error=パスワードリセット用のリンクを送信できませんでした。もう一度お試しください。');
+  }
+
+  return redirect('/login?view=forgot-password&message=パスワードリセット用のリンクをあなたのメールアドレスに送信しました。');
+}
+
+
+/**
  * 在庫の更新（Dashboard用）
  */
 export async function updateInventory(

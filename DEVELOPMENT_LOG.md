@@ -1,3 +1,4 @@
+
 # DEVELOPMENT_LOG.md
 これは開発メモであると同時にAIと継続的な作業を行うための指令書である。
 
@@ -25,7 +26,7 @@ FF11 装束強化進捗トラッカー。複数キャラクターの装備進捗
 
 ---
 
-## 2. ディレクトリ構成 (2026-01-09 更新)
+## 2. ディレクトリ構成 (2026-01-10 更新)
 ### 詳細が知りたい場合は find src -maxdepth 4 -not -path '*/.*' を求めよ
 - src/
   - app/ (Routing)
@@ -33,6 +34,7 @@ FF11 装束強化進捗トラッカー。複数キャラクターの装備進捗
     - characters/ : キャラクター管理 (一覧、作成)
     - accounts/ : ゲームアカウント管理
     - login/ : ログインページ
+    - reset-password/ : パスワードリセットページ
     - auth/ : 認証関連 (コールバック、サインアウト)
     - settings/ : アプリ設定
     - test/ : テスト用ページ
@@ -40,6 +42,9 @@ FF11 装束強化進捗トラッカー。複数キャラクターの装備進捗
     - page.tsx : 総合ポータル
     - layout.tsx : アプリ共通レイアウト（AppShell）
   - components/ (UI Components)
+    - auth/
+      - login-form.tsx
+      - forgot-password-form.tsx
     - layout/ : AppHeader, Navigation
     - gear/ : GearTrackerContainer, JobSelector, GearSlotList, GearEditModal, GearCategoryTabs, GearUpgradeRecipe
     - gear/hooks/ : useGearTracker, useUpgradeRecipes (カスタムフック)
@@ -80,6 +85,14 @@ FF11 装束強化進捗トラッカー。複数キャラクターの装備進捗
 ---
 
 ## 4. 開発履歴 (サマリー)
+
+### [2026-01-10] 認証フローの包括的なバグ修正とUI改善
+- **課題**: ログイン画面とパスワードリセット機能に、状態管理の不整合やサーバーエラー、UIの崩れなど複数の問題が混在していた。
+- **解決**: 認証フロー全体を見直し、コンポーネントの責務分離と堅牢な状態管理モデルへの移行を実施。
+    - **ディレクトリ構成の整理**: 認証関連コンポーネントを`src/components/auth/`に集約し、パスワードリセットページ(`src/app/reset-password/`)を新設。
+    - **状態管理の改善**: ログイン/パスワード忘れフォームの表示切替を、URLのクエリパラメータ(`useSearchParams`)に一本化。`useState`との競合によるバグを根本的に解消。
+    - **サーバーアクションの修正**: パスワードリセット時のリダイレクトURL生成ロジックを修正し、サーバーエラーを解決。
+    - **UI/UXの改善**: フォームのレイアウト崩れを修正し、FF11風のカスタムスタイルを正しく適用。また、ユーザーへの通知メッセージを日本語に統一。
 
 ### [日付自動挿入] 管理者権限機能の基盤を実装 (RBAC)
 - **課題**: マスターデータを安全に管理・編集するための専用の仕組みが必要だった。
