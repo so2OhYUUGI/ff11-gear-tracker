@@ -56,22 +56,33 @@ export async function signup(formData: FormData) {
  * パスワードリセットのリクエスト
  */
 export async function requestPasswordReset(formData: FormData) {
-  const email = formData.get('email') as string;
-  const supabase = await createClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  try {
+    const email = formData.get('email') as string;
+    const supabase = await createClient();
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    // リセット後にリダイレクトする先のURL
-    redirectTo: `${siteUrl}/reset-password`,
-  });
+    if (!siteUrl) {
+      // このエラーは、.env.localまたは本番環境の環境変数が正しく設定されていれば、通常は発生しない
+      throw new Error("致命的エラー: NEXT_PUBLIC_SITE_URL環境変数が設定されていません。");
+    }
 
-  if (error) {
-    return redirect('/login?view=forgot-password&error=パスワードリセット用のリンクを送信できませんでした。もう一度お試しください。');
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${siteUrl}/reset-password`,
+    });
+
+    if (error) {
+      console.error("Password Reset Error (Supabase):", error.message);
+      return redirect('/login?view=forgot-password&error=パスワードリセット用のリンクを送信できませんでした。もう一度お試しください。');
+    }
+
+    return redirect('/login?view=forgot-password&message=パスワードリセット用のリンクをあなたのメールアドレスに送信しました。');
+
+  } catch (exception) {
+    console.error("Password Reset Exception (Unhandled):", exception);
+    const errorMessage = exception instanceof Error ? exception.message : 'サーバーで予期せぬエラーが発生しました。';
+    return redirect(`/login?view=forgot-password&error=${encodeURIComponent(errorMessage)}`);
   }
-
-  return redirect('/login?view=forgot-password&message=パスワードリセット用のリンクをあなたのメールアドレスに送信しました。');
 }
-
 
 /**
  * 在庫の更新（Dashboard用）
