@@ -251,7 +251,7 @@
     @apply absolute inset-0 w-full h-full bg-gradient-to-r from-black/60 via-black/20 to-transparent;
   }
   .gear-tracker__back-button {
-    @apply absolute top-2 left-2 z-20 w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold transition-colors bg-black/20 hover:bg-black/40;
+    @apply h-9 w-9 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center font-bold shadow-sm transition-all active:scale-95 shrink-0 z-10 mr-4;
   }
   .gear-tracker__world-name {
     @apply font-mono text-xs opacity-70 uppercase tracking-widest;
@@ -432,7 +432,7 @@
   @apply relative inline-block;
 }
 .job-selector__trigger {
-  @apply flex items-center gap-1.5 py-1.5 px-3 rounded-md transition-colors;
+  @apply flex items-center justify-between w-52 gap-1.5 py-1.5 px-3 rounded-md transition-colors;
   background-color: hsl(var(--secondary));
   border: 1px solid hsl(var(--border));
 }
@@ -444,7 +444,7 @@
   color: hsl(var(--muted-foreground));
 }
 .job-selector__trigger-value {
-  @apply text-sm font-bold;
+  @apply text-sm font-bold flex-1 text-left ml-1;
   color: hsl(var(--foreground));
 }
 .job-selector__trigger-icon {
