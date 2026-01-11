@@ -2,7 +2,7 @@
 
 import { UI_STYLE } from "@/lib/styles";
 import { getColorByIndex } from "@/lib/colors";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 export default function AccountList({ initialAccounts }: { initialAccounts: any[] }) {
